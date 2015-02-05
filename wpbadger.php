@@ -335,7 +335,8 @@ EOHTML
     
     <p>This is the email send when a badge is awarded to a user.  Valid template tags are:
     <b>{ISSUER_NAME}</b>; <b>{ISSUER_ORG}</b>; <b>{ISSUER_CONTACT}</b>; <b>{BADGE_TITLE}</b>;
-    {BADGE_URL}; {BADGE_IMAGE_URL}; {BADGE_DESCRIPTION}; <b>{AWARD_TITLE}</b>; {AWARD_URL}, and {EVIDENCE}.
+    {BADGE_URL}; {BADGE_IMAGE_URL}; {BADGE_DESCRIPTION}; <b>{AWARD_TITLE}</b>; <b>{FIRST_NAME}</b>; 
+    <b>{LAST_NAME}</b>; {AWARD_URL}, and {EVIDENCE}.
     Only <b>bold</b> tags are avilable for the subject.</p>
 
     <label for="wpbadger-awarded-email-subject"><em>Subject</em></label>
