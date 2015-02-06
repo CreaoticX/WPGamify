@@ -1,12 +1,4 @@
 <?php
-/*
-Plugin Name: CubePoints
-Plugin URI: http://cubepoints.com
-Description: CubePoints is a point management system for sites running on WordPress. Users can earn virtual credits on your site by posting comments, creating posts, or even by logging in each day! Install CubePoints and watch your visitor interaction soar by offering them points which could be used to view certain posts, exchange for downloads or even real items!
-Version: 3.2.1
-Author: Jonathan Lau & Peter Zhang
-Author URI: http://cubepoints.com
-*/
 
 global $wpdb;
 

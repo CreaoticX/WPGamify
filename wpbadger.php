@@ -1,15 +1,4 @@
 <?php
-/**
- * @package WPBadger
- */
-/*
-Plugin Name: WPBadger
-Plugin URI: https://github.com/davelester/WPBadger
-Description: A lightweight badge issuing platform built using WordPress.
-Version: 0.7.0
-Author: Dave Lester
-Author URI: http://www.davelester.org
-*/
 
 add_action('admin_init', 'wpbadger_admin_init');
 add_action('admin_head', 'wpbadger_admin_head');
