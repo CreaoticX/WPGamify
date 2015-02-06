@@ -1,15 +1,5 @@
 <?php
-/**
- * @package WPBadgeDisplay
- */
-/*
-Plugin Name: WPBadgeDisplay
-Plugin URI: https://github.com/davelester/WPBadgeDisplay
-Description: Adds a widget for displaying Open Badges on your blog.
-Version: 0.8
-Author: Dave Lester
-Author URI: http://www.davelester.org
-*/
+
 
 class WPBadgeDisplayWidget extends WP_Widget
 {
