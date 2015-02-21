@@ -39,8 +39,8 @@ function cp_admin_modules(){
 ?>
 
 	<div class="wrap">
-		<h2>CubePoints - <?php _e('Modules', 'cp'); ?></h2>
-		<?php _e('View installed CubePoints modules!', 'cp'); ?><br /><br />
+		<h2>WPGamify - <?php _e('Modules', 'cp'); ?></h2>
+		<?php _e('View installed WPGamify modules!', 'cp'); ?><br /><br />
 		
 		<?php
 			if( isset($cp_module_activate) && isset($cp_module_name) ){

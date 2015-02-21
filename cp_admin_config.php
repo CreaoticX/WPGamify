@@ -64,8 +64,8 @@ function cp_admin_config()
 ?>
 
 	<div class="wrap">
-		<h2>CubePoints - <?php _e('Configure', 'cp'); ?></h2>
-		<?php _e('Configure CubePoints to your liking!', 'cp'); ?><br /><br />
+		<h2>WPGamify - <?php _e('Configure', 'cp'); ?></h2>
+		<?php _e('Configure WPGamify to your liking!', 'cp'); ?><br /><br />
 	
 		<form name="cp_admin_form" method="post">
 			<input type="hidden" name="cp_admin_form_submit" value="Y" />

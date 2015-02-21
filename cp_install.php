@@ -16,7 +16,7 @@
 	add_option('cp_about_posts', true);
 	add_option('cp_about_comments', true);
 	add_option('cp_topfilter', array());
-	add_option('cp_ver', CP_VER);
+	add_option('wpgamify_version', WPGAMIFY_VERSION);
 
 	// create database
 	global $wpdb;
