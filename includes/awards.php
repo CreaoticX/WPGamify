@@ -44,7 +44,6 @@ class WPGamify_Issued_Badge_Schema {
 
         add_filter('template_include', array($this, 'template_include'));
 
-        add_action('wp_enqueue_scripts', array($this, 'wp_enqueue_scripts'));
         add_action('wp_ajax_nopriv_wpgamify_award_ajax', array($this, 'ajax'));
 
         add_action('publish_post', array($this, 'send_email'));
@@ -354,22 +353,6 @@ EOHTML;
             return dirname(__FILE__) . '/awards_json.php';
 
         return $template;
-    }
-
-    function wp_enqueue_scripts() {
-        if (get_post_type() != $this->get_post_type_name())
-            return;
-
-        if (is_single()) {
-            wp_enqueue_script('openbadges', 'https://backpack.openbadges.org/issuer.js', array('jquery'), null);
-
-//            wp_enqueue_script('wpgamify-awards', plugins_url('js/awards.js', dirname(__FILE__)), array('jquery'));
-//            wp_localize_script('wpgamify-awards', 'WPGamify_Awards', array(
-//                'ajaxurl' => admin_url('admin-ajax.php'),
-//                'assertion_url' => add_query_arg('json', '1', get_permalink()),
-//                'award_id' => get_the_ID()
-//            ));
-        }
     }
 
     // Admin Filters and Actions

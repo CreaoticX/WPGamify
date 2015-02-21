@@ -11,8 +11,6 @@ add_action('openbadges_shortcode', 'wpgamify_shortcode');
 register_activation_hook(__FILE__,'wpgamify_activate');
 register_deactivation_hook(__FILE__,'wpgamify_deactivate');
 
-add_action('wp_enqueue_scripts', 'wpgamify_enqueue_scripts');
-
 require_once( dirname(__FILE__) . '/includes/badges.php' );
 require_once( dirname(__FILE__) . '/includes/badges_stats.php' );
 require_once( dirname(__FILE__) . '/includes/awards.php' );
@@ -63,10 +61,6 @@ function wpgamify_admin_head()
         wp_enqueue_script( 'wpgamify-admin-post' );
 }
 
-function wpgamify_enqueue_scripts()
-{
-    wp_enqueue_style( 'wpgamify-styles', plugins_url('css/styles.css', __FILE__) );
-}
 
 function wpgamify_admin_menu()
 {
