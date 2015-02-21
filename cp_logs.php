@@ -3,7 +3,6 @@
  * CubePoints logs display
  */
 
-	
  function cp_show_logs($type='all', $limit=10, $datatables=true){
 
 	global $wpdb;
@@ -14,7 +13,13 @@
 	if($type!='all'){
 		$uid = (int) $type;
 		$q = ' WHERE `uid` = ' . $uid . ' ';
-	}
+	}else if(is_admin()){
+            $uid = (int) filter_input(INPUT_GET, "wpguser");
+            $user = get_userdata($uid);
+            if($user->ID!=''){
+                $q = ' WHERE `uid` = ' . $user->ID . ' ';
+            }
+        }
 	if($limit>0){
 		$limitq = 'LIMIT '.(int) $limit;
 	}

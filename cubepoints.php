@@ -1,5 +1,8 @@
 <?php
 
+//Prevents file from being accessed directly.
+if ( ! defined( 'ABSPATH' ) ) exit;
+
 global $wpdb;
 
 /** Define constants */

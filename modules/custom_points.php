@@ -44,8 +44,8 @@ if(cp_module_activated('customp')){
 
 		// verify this came from the our screen and with proper authorization,
 		// because save_post can be triggered at other times
-
-		if ( !wp_verify_nonce( $_POST['cp_module_customp_nonce'], plugin_basename(__FILE__) )) {
+                $cp_module_customp_nonce =  filter_input(INPUT_POST, 'cp_module_customp_nonce');
+		if ( !wp_verify_nonce( $cp_module_customp_nonce, plugin_basename(__FILE__) )) {
 			return $post_id;
 		}
 
@@ -55,7 +55,8 @@ if(cp_module_activated('customp')){
 
 	  
 		// Check permissions
-		if ( 'page' == $_POST['post_type'] ) {
+                $post_type = filter_input(INPUT_POST, 'post_type');
+		if ( 'page' == $post_type) {
 			if ( !current_user_can( 'edit_page', $post_id ) )
 				return $post_id;
 			} else {
@@ -64,8 +65,10 @@ if(cp_module_activated('customp')){
 		}
 
 		// OK, we're authenticated: we need to find and save the data
-		update_post_meta($post_id, 'cp_points_enable', (int)$_POST['cp_module_customp_enable']);
-		update_post_meta($post_id, 'cp_points', (int)$_POST['cp_module_customp_points']);
+                $cp_module_customp_enable = (int) filter_input(INPUT_POST, 'cp_module_customp_enable');
+                $cp_module_customp_points = (int) filter_input(INPUT_POST, 'cp_module_customp_points');
+		update_post_meta($post_id, 'cp_points_enable', $cp_module_customp_enable);
+		update_post_meta($post_id, 'cp_points', $cp_module_customp_points);
 
 	}
 

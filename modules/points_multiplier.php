@@ -25,7 +25,8 @@ if(cp_module_activated('pmultiply')){
 	add_action('cp_config_form','cp_module_pmultiply_config');
 	
 	function cp_module_pmultiply_config_process(){
-		$cp_module_pmultiply_multiplier = ((int)$_POST['cp_module_pmultiply_multiplier']<0)?0:(int)$_POST['cp_module_pmultiply_multiplier'];
+            $module_pmultiply_multiplier = (int)filter_input(INPUT_POST, 'cp_module_pmultiply_multiplier');
+		$cp_module_pmultiply_multiplier = ($module_pmultiply_multiplier<0)?0:$module_pmultiply_multiplier;
 		update_option('cp_module_pmultiply_multiplier', $cp_module_pmultiply_multiplier);
 	}
 	add_action('cp_config_process','cp_module_pmultiply_config_process');

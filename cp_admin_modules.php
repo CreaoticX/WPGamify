@@ -6,28 +6,36 @@
 
 /** Make sure plugins get activated before page loads */
 function cp_admin_module_process(){
-	if( isset($_POST['cp_module_activate']) && isset($_POST['cp_module_name']) ){
-		cp_module_activation_set( $_POST['cp_module_activate'] , true );
-	}
-	if( isset($_POST['cp_module_deactivate']) && isset($_POST['cp_module_name'])){
-		cp_module_activation_set( $_POST['cp_module_deactivate'] , false );
-	}
+    $cp_module_activate = filter_input(INPUT_POST, 'cp_module_activate');
+    $cp_module_deactivate = filter_input(INPUT_POST, 'cp_module_deactivate');
+    $cp_module_name = filter_input(INPUT_POST, 'cp_module_name');
+    if( isset($cp_module_activate) && isset($cp_module_name) ){
+        cp_module_activation_set( $cp_module_activate , true );
+    }
+    if( isset($cp_module_deactivate) && isset($cp_module_name)){
+        cp_module_activation_set( $cp_module_deactivate , false );
+    }
 }
 add_action('plugins_loaded','cp_admin_module_process',1);
 
 /** Do activation and deactivation hooks */
 function cp_admin_module_hooks(){
-	if( isset($_POST['cp_module_activate']) && isset($_POST['cp_module_name'])){
-		do_action('cp_module_'.$_POST['cp_module_activate'].'_activate');
-	}
-	if( isset($_POST['cp_module_deactivate']) && isset($_POST['cp_module_name'])){
-		do_action('cp_module_'.$_POST['cp_module_deactivate'].'_deactivate');
-	}
+    $cp_module_activate = filter_input(INPUT_POST, 'cp_module_activate');
+    $cp_module_deactivate = filter_input(INPUT_POST, 'cp_module_deactivate');
+    $cp_module_name = filter_input(INPUT_POST, 'cp_module_name');
+    if( isset($cp_module_activate) && isset($cp_module_name)){
+        do_action('cp_module_'.$cp_module_activate.'_activate');
+    }
+    if( isset($cp_module_deactivate) && isset($cp_module_name)){
+        do_action('cp_module_'.$cp_module_deactivate.'_deactivate');
+    }
 }
 add_action('init','cp_admin_module_hooks',1);
 
-function cp_admin_modules()
-{
+function cp_admin_modules(){
+    $cp_module_activate = filter_input(INPUT_POST, 'cp_module_activate');
+    $cp_module_deactivate = filter_input(INPUT_POST, 'cp_module_deactivate');
+    $cp_module_name = filter_input(INPUT_POST, 'cp_module_name');
 ?>
 
 	<div class="wrap">
@@ -35,11 +43,11 @@ function cp_admin_modules()
 		<?php _e('View installed CubePoints modules!', 'cp'); ?><br /><br />
 		
 		<?php
-			if( isset($_POST['cp_module_activate']) && isset($_POST['cp_module_name']) ){
-				echo '<div class="updated"><p><strong>'.__('Module', 'cp').' "'.$_POST['cp_module_name'].'"'.__(' activated','cp').'!</strong></p></div>';
+			if( isset($cp_module_activate) && isset($cp_module_name) ){
+				echo '<div class="updated"><p><strong>'.__('Module', 'cp').' "'.$cp_module_name.'"'.__(' activated','cp').'!</strong></p></div>';
 			}
-			if( isset($_POST['cp_module_deactivate']) && isset($_POST['cp_module_name']) ){
-				echo '<div class="updated"><p><strong>'.__('Module', 'cp').' "'.$_POST['cp_module_name'].'"'.__(' deactivated','cp').'!</strong></p></div>';
+			if( isset($cp_module_deactivate) && isset($cp_module_name) ){
+				echo '<div class="updated"><p><strong>'.__('Module', 'cp').' "'.$cp_module_name.'"'.__(' deactivated','cp').'!</strong></p></div>';
 			}
 		?>
 		
@@ -93,8 +101,6 @@ function cp_admin_modules()
 	</div>
 	
 	<br /><br />
-	
-	<?php cp_donate_html(); ?>
 	
 		<script type="text/javascript">
 		jQuery(document).ready(function() {
