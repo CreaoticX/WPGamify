@@ -211,7 +211,7 @@ class WPGamify_Points_Core {
         }
         update_option('cp_moduleVersions', serialize($module_ver));
     }
-
+    
 }
 
 $GLOBALS['wpgamify_points_core'] = new WPGamify_Points_Core();

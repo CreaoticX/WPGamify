@@ -21,7 +21,9 @@ require_once 'wpbadgedisplay.php';
 require_once 'wpgamify_mission.php';
 require_once 'wpgamify_default_missions.php';
 require_once 'wpgamify_admin.php';
-require_once 'wpgamfiy_points_core.php';
+require_once 'wpgamify_points_core.php';
+require_once 'wpgamify_install.php';
+require_once 'wpgamify_curl.php';
 
 global $wpdb;
 
@@ -35,12 +37,6 @@ add_option('wpgamify_version', WPGAMIFY_VERSION);
 
 /** Loads the plugin's translated strings */
 load_plugin_textdomain('cp', false, dirname(plugin_basename(__FILE__)).'/languages');
-
-/** Includes commons */
-require_once 'cp_common.php';
-
-/** Includes install script */
-require_once 'cp_install.php';
 
 /** Includes upgrade script */
 require_once 'cp_upgrade.php';
@@ -63,7 +59,8 @@ require_once 'cp_logs.php';
 /** Hook for plugin installation */
 register_activation_hook( __FILE__ , 'cp_activate' );
 function cp_activate(){
-	cp_install();
+    $wpg_install = new WPGamify_Install();
+    $wpg_install->install();
 }
 
 /** Include all modules in the modules folder */

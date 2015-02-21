@@ -5,7 +5,8 @@
 
 if(get_option('cp_db_version')<1.3){
 	if(is_admin()){
-		cp_install();
+                $wpg_install = new WPGamify_Install();
+                $wpg_install->install();
 		update_option('cp_db_version', 1.3);
 		global $wpdb;
 		if($wpdb->get_var("SHOW TABLES LIKE '".$wpdb->base_prefix."cubepoints'") == $wpdb->base_prefix."cubepoints" ){

@@ -3,9 +3,12 @@
  * CubePoints logs display
  */
 
+require_once 'classes/ClassGamifyMisc.php';
+
  function cp_show_logs($type='all', $limit=10, $datatables=true){
 
 	global $wpdb;
+        $wpg_misc = new GamifyMisc();
   
   $q      = '';
   $limitq = '';  
@@ -40,7 +43,7 @@
 				<td title="<?php echo $user_nicename ?>"><?php echo $username; ?></td>
 				<td><?php echo $result->points; ?></td>
 				<td><?php do_action('cp_logs_description', $result->type, $result->uid, $result->points, $result->data); ?></td>
-				<td title="<?php echo date('Y-m-d H:i:s', $result->timestamp); ?>"><?php echo cp_relativeTime($result->timestamp); ?></td>
+				<td title="<?php echo date('Y-m-d H:i:s', $result->timestamp); ?>"><?php echo $wpg_misc->relativeTime($result->timestamp); ?></td>
 			</tr>
 		<?php
 		}
