@@ -40,12 +40,6 @@ function cp_admin_register_scripts() {
 		   '1.7.4' );
 	wp_register_style('datatables', CP_PATH . 'assets/datatables/css/style.css');
 	
-	/** Register autocomplete script and stylesheet for admin pages */
-	wp_register_script('autocomplete',
-		   CP_PATH . 'assets/autocomplete/jquery.autocomplete.js',
-		   array('jquery'),
-		   '3.2.2' );
-	wp_register_style('autocomplete', CP_PATH . 'assets/autocomplete/jquery.autocomplete.css');
 }
 
 /** Enqueue datatables */
@@ -62,15 +56,5 @@ add_action('admin_print_scripts-cubepoints_page_cp_admin_logs', 'cp_datatables_s
 add_action('admin_print_styles-cubepoints_page_cp_admin_logs', 'cp_datatables_style');
 add_action('admin_print_scripts-cubepoints_page_cp_admin_modules', 'cp_datatables_script');
 add_action('admin_print_styles-cubepoints_page_cp_admin_modules', 'cp_datatables_style');
-
-/** Enqueue autocomplete */
-function cp_autocomplete_script(){
-	wp_enqueue_script('autocomplete');
-}
-function cp_autocomplete_style(){
-	wp_enqueue_style('autocomplete');
-}
-add_action('admin_print_scripts-cubepoints_page_cp_admin_add_points', 'cp_autocomplete_script');
-add_action('admin_print_styles-cubepoints_page_cp_admin_add_points', 'cp_autocomplete_style');
 
 ?>
