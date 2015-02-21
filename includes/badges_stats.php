@@ -1,9 +1,9 @@
 <?php
 
-add_action( 'wp_ajax_wpbadger_get_awards_stats', 'wpbadger_badge_get_awards_stats' );
-add_action( 'admin_menu', 'wpbadger_badges_stats_admin_menu' );
+add_action( 'wp_ajax_wpgamify_get_awards_stats', 'wpgamify_badge_get_awards_stats' );
+add_action( 'admin_menu', 'wpgamify_badges_stats_admin_menu' );
 
-function wpbadger_badge_get_awards_stats()
+function wpgamify_badge_get_awards_stats()
 {
     $badge_id = (int)$_REQUEST[ 'badge_id' ];
     $query = new WP_Query( array(
@@ -12,7 +12,7 @@ function wpbadger_badge_get_awards_stats()
         'nopaging'      => true,
         'meta_query' => array(
             array(
-                'key'   => 'wpbadger-award-choose-badge',
+                'key'   => 'wpgamify-award-choose-badge',
                 'value' => $badge_id
             )
         )
@@ -26,7 +26,7 @@ function wpbadger_badge_get_awards_stats()
     );
     while ($query->next_post())
     {
-        $award_status = get_post_meta( $query->post->ID, 'wpbadger-award-status', true );
+        $award_status = get_post_meta( $query->post->ID, 'wpgamify-award-status', true );
 
         $stats[ 'Count' ]++;
         $stats[ $award_status ]++;
@@ -48,7 +48,7 @@ function wpbadger_badge_get_awards_stats()
 if (!class_exists( 'WP_List_Table' ))
     require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
 
-class WPBadger_Badges_Stats_List_Table extends WP_List_Table
+class WPGamify_Badges_Stats_List_Table extends WP_List_Table
 {
     var $sort_key = 'title';
     var $sort_dir = 'ASC';
@@ -160,8 +160,8 @@ class WPBadger_Badges_Stats_List_Table extends WP_List_Table
         ) );
         while ($query->next_post())
         {
-            $badge_id = (int)get_post_meta( $query->post->ID, 'wpbadger-award-choose-badge', true );
-            $award_status = get_post_meta( $query->post->ID, 'wpbadger-award-status', true );
+            $badge_id = (int)get_post_meta( $query->post->ID, 'wpgamify-award-choose-badge', true );
+            $award_status = get_post_meta( $query->post->ID, 'wpgamify-award-status', true );
 
             if (!isset( $stats[ $badge_id ] ) || !isset( $stats[ $badge_id ][ $award_status ] ))
                 continue;
@@ -204,23 +204,23 @@ class WPBadger_Badges_Stats_List_Table extends WP_List_Table
     }
 }
 
-function wpbadger_badges_stats_admin_menu()
+function wpgamify_badges_stats_admin_menu()
 {
     $badge_type = get_post_type_object( 'badge' );
 
     add_submenu_page(
         'edit.php?post_type=badge',
-        'WPBadger | Badge Statistics',
+        'WPGamify | Badge Statistics',
         'Badge Statistics',
         $badge_type->cap->edit_posts,
-        'wpbadger_badges_stats_page',
-        'wpbadger_badges_stats_page'
+        'wpgamify_badges_stats_page',
+        'wpgamify_badges_stats_page'
     );
 }
 
-function wpbadger_badges_stats_page()
+function wpgamify_badges_stats_page()
 {
-    $table = new WPBadger_Badges_Stats_List_Table( $_REQUEST[ 'orderby' ], $_REQUEST[ 'order' ] );
+    $table = new WPGamify_Badges_Stats_List_Table( $_REQUEST[ 'orderby' ], $_REQUEST[ 'order' ] );
     $table->prepare_items();
 
 ?>

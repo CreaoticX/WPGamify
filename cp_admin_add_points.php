@@ -9,7 +9,7 @@ function cp_admin_add_points()
 ?>
 
 	<div class="wrap">
-		<h2>CubePoints - <?php _e('Add Points', 'cp'); ?></h2>
+		<h2>WPGamify - <?php _e('Add Points', 'cp'); ?></h2>
 		<?php _e('Manually award points to your users.', 'cp'); ?><br /><br />
 
 		<form method="post" name="cp_add_points_form" id="cp_add_points_form">

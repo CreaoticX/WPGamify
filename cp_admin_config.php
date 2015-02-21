@@ -6,8 +6,10 @@
 function cp_admin_config()
 {
 	// handles form submissions
- 	if ( isset($_POST['cp_admin_form_submit']) && $_POST['cp_admin_form_submit'] == 'Y' ) {
-		$cp_topfilter = explode(',',str_replace(array("\n","\r"),'',$_POST['cp_topfilter']));
+        $admin_form_submit = filter_input(INPUT_POST, 'cp_admin_form_submit');
+ 	if ( isset($admin_form_submit) && $admin_form_submit == 'Y' ) {
+                $topfilter = filter_input(INPUT_POST, 'cp_topfilter');
+		$cp_topfilter = explode(',',str_replace(array("\n","\r"),'',$topfilter));
 		if(cp_topfilter==''){
 			$cp_topfilter=array();
 		}
@@ -18,15 +20,15 @@ function cp_admin_config()
 			$cp_topfilter=array_unique($cp_topfilter);
 			$cp_topfilter=array_filter($cp_topfilter, 'strlen');
 		}
-		$cp_comment_points = (int)$_POST['cp_comment_points'];
-		$cp_del_comment_points = (int)$_POST['cp_del_comment_points'];
-		$cp_post_points = (int)$_POST['cp_post_points'];
-		$cp_reg_points = (int)$_POST['cp_reg_points'];
-		$cp_prefix = $_POST['cp_prefix'];
-		$cp_suffix = $_POST['cp_suffix'];
-		$cp_about_posts = (bool)$_POST['cp_about_posts'];
-		$cp_about_comments = (bool)$_POST['cp_about_comments'];
-		$cp_donation = (bool)$_POST['cp_donation'];
+		$cp_comment_points = (int)filter_input(INPUT_POST, 'cp_comment_points');
+		$cp_del_comment_points = (int)filter_input(INPUT_POST, 'cp_del_comment_points');
+		$cp_post_points = (int)filter_input(INPUT_POST, 'cp_post_points');
+		$cp_reg_points = (int)filter_input(INPUT_POST, 'cp_reg_points');
+		$cp_prefix = filter_input(INPUT_POST, 'cp_prefix');
+		$cp_suffix = filter_input(INPUT_POST, 'cp_suffix');
+		$cp_about_posts = (bool)filter_input(INPUT_POST, 'cp_about_posts');
+		$cp_about_comments = (bool)filter_input(INPUT_POST, 'cp_about_comments');
+		$cp_donation = (bool)filter_input(INPUT_POST, 'cp_donation');
 		update_option('cp_comment_points', $cp_comment_points);
 		update_option('cp_del_comment_points', $cp_del_comment_points);
 		update_option('cp_post_points', $cp_post_points);
