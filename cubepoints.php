@@ -40,9 +40,6 @@ require_once 'cp_widgets.php';
 /** Includes logs display */
 require_once 'cp_logs.php';
 
-/** Includes admin pages */
-require_once 'cp_admin.php';
-
 /** Hook for plugin installation */
 register_activation_hook( __FILE__ , 'cp_activate' );
 function cp_activate(){

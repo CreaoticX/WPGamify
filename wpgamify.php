@@ -21,3 +21,4 @@ require_once 'wpbadgedisplay.php';
 require_once 'cubepoints.php';
 require_once 'wpgamifymission.php';
 require_once 'wpgamifydefaultmissions.php';
+require_once 'wpgamify_admin.php';
