@@ -206,7 +206,7 @@ class WPGamify_Badges_Stats_List_Table extends WP_List_Table
 
 function wpgamify_badges_stats_admin_menu()
 {
-    $badge_type = get_post_type_object( 'badge' );
+    $badge_type = get_post_type_object( 'badgetemplate' );
 
     add_submenu_page(
         'edit.php?post_type=badge',
