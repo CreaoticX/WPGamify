@@ -23,7 +23,7 @@ if (cp_module_activated('dailypoints')) {
         $count = (int) $wpdb->get_var("SELECT COUNT(*) FROM " . CP_DB . " WHERE `uid`=$uid AND `timestamp`>$difference AND `type`='dailypoints'");
         if ($count != 0)
             return;
-        $wpgamify_points_core->wpg_points('dailypoints', $uid, get_option('cp_module_dailypoints_points'), '');
+        $wpgamify_points_core->wpg_add_points('dailypoints', $uid, get_option('cp_module_dailypoints_points'), '');
     }
 
     add_action('init', 'cp_module_dailypoints_checkTimer', 1);

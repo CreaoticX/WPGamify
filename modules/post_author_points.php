@@ -41,7 +41,7 @@ if (cp_module_activated('post_author_points')) {
         // do not give points if comment is made by post author
         if ($cdata->user_id != $pdata->post_author) {
             global $wpgamify_points_core;
-            $wpgamify_points_core->wpg_points('post_comment', $pdata->post_author, get_option('cp_post_author_points'), $cid);
+            $wpgamify_points_core->wpg_add_points('post_comment', $pdata->post_author, get_option('cp_post_author_points'), $cid);
         }
     }
 
@@ -54,7 +54,7 @@ if (cp_module_activated('post_author_points')) {
         // do not subtract points if comment is made by post author
         if ($cdata->user_id != $pdata->post_author) {
             global $wpgamify_points_core;
-            $wpgamify_points_core->wpg_points('post_comment_remove', $pdata->post_author, -get_option('cp_post_author_points'), $cid);
+            $wpgamify_points_core->wpg_add_points('post_comment_remove', $pdata->post_author, -get_option('cp_post_author_points'), $cid);
         }
     }
 

@@ -134,8 +134,8 @@ class WPGamify_Points_Core {
     }
 
     /** Alter points and add to logs */
-    function wpg_points($type, $uid, $points, $data,$custom='default') {
-        $points = apply_filters('wpg_points', $points, $type, $uid, $data,$custom);
+    function wpg_add_points($type, $uid, $points, $data,$custom='default') {
+        $points = apply_filters('wpg_add_points', $points, $type, $uid, $data,$custom);
         $this->wpg_alterPoints($uid, $points,$custom);
         $this->wpg_points_log($type, $uid, $points, $data,$custom);
     }

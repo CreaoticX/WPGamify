@@ -31,7 +31,7 @@ function cp_newComment($cid, $status) {
     if ($status == 1) {
         do_action('cp_comment_add', $cid);
         global $wpgamify_points_core;
-        $wpgamify_points_core->wpg_points('comment', $wpgamify_points_core->wpg_currentUser(), 
+        $wpgamify_points_core->wpg_add_points('comment', $wpgamify_points_core->wpg_currentUser(), 
                 apply_filters('cp_comment_points', get_option('cp_comment_points')), $cid);
     }
 }
@@ -44,7 +44,7 @@ add_action('comment_spam_to_approved', 'cp_commentApprove', 10, 1);
 function cp_commentApprove($cdata) {
     do_action('cp_comment_add', $cdata->comment_ID);
     global $wpgamify_points_core;
-    $wpgamify_points_core->wpg_points('comment', $cdata->user_id, apply_filters('cp_comment_points', get_option('cp_comment_points')), $cdata->comment_ID);
+    $wpgamify_points_core->wpg_add_points('comment', $cdata->user_id, apply_filters('cp_comment_points', get_option('cp_comment_points')), $cdata->comment_ID);
 }
 
 /** Comment unapproved hook */
@@ -60,7 +60,7 @@ function cp_commentUnapprove($cdata) {
     }
     do_action('cp_comment_remove', $cdata->comment_ID);
     global $wpgamify_points_core;
-    $wpgamify_points_core->wpg_points('comment_remove', $cdata->user_id, apply_filters('cp_del_comment_points', -get_option('cp_del_comment_points')), $cdata->comment_ID);
+    $wpgamify_points_core->wpg_add_points('comment_remove', $cdata->user_id, apply_filters('cp_del_comment_points', -get_option('cp_del_comment_points')), $cdata->comment_ID);
 }
 
 /** Comments logs hook */
@@ -103,7 +103,7 @@ function cp_newPost($pid) {
     $count = (int) $wpdb->get_var("select count(id) from `" . CP_DB . "` where `type`='post' and `data`=" . $pid);
     if ($count == 0) {
         global $wpgamify_points_core;
-        $wpgamify_points_core->wpg_points('post', $uid, apply_filters('cp_post_points', get_option('cp_post_points')), $pid);
+        $wpgamify_points_core->wpg_add_points('post', $uid, apply_filters('cp_post_points', get_option('cp_post_points')), $pid);
     }
 }
 
@@ -123,7 +123,7 @@ add_action('user_register', 'cp_newUser');
 
 function cp_newUser($uid) {
     global $wpgamify_points_core;
-    $wpgamify_points_core->wpg_points('register', $uid, apply_filters('cp_reg_points', get_option('cp_reg_points')), $uid);
+    $wpgamify_points_core->wpg_add_points('register', $uid, apply_filters('cp_reg_points', get_option('cp_reg_points')), $uid);
 }
 
 /** User registration logs hook */
@@ -302,7 +302,7 @@ function cp_manage_form_submit() {
             $points = 0;
         }
         global $wpgamify_points_core;
-        $wpgamify_points_core->wpg_points_set('admin', $uid, $points, $wpgamify_points_core->wpg_currentUser());
+        $wpgamify_points_core->wpg_add_points_set('admin', $uid, $points, $wpgamify_points_core->wpg_currentUser());
     } else {
         $response = json_encode(array('error' => __('Invalid request!', 'cp')));
         echo $response;
@@ -409,7 +409,7 @@ function cp_add_points_user_update() {
     }
 
     global $wpgamify_points_core;
-    $wpgamify_points_core->wpg_points('addpoints', $id, $points, htmlentities($description));
+    $wpgamify_points_core->wpg_add_points('addpoints', $id, $points, htmlentities($description));
     $response = json_encode(array(
         'status' => 'ok',
         'newpoints' => $wpgamify_points_core->wpg_getPoints($id)

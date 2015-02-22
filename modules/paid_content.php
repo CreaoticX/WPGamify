@@ -236,10 +236,10 @@ if (cp_module_activated('pcontent')) {
             add_filter('cp_module_pcontent_post_content_' . $cp_module_pcontent_pay, create_function('$data', 'return "<p style=\"color:red;\">' . get_option('cp_module_pcontent_text_insufficient') . '</p>";'));
             return;
         }
-        $wpgamify_points_core->wpg_points('pcontent', $wpgamify_points_core->wpg_currentUser(), -get_post_meta($cp_module_pcontent_pay, 'cp_pcontent_points', 1), $cp_module_pcontent_pay);
+        $wpgamify_points_core->wpg_add_points('pcontent', $wpgamify_points_core->wpg_currentUser(), -get_post_meta($cp_module_pcontent_pay, 'cp_pcontent_points', 1), $cp_module_pcontent_pay);
         if (get_option('cp_module_pcontent_payauthor')) {
             $post = get_post($cp_module_pcontent_pay);
-            $wpgamify_points_core->wpg_points('pcontent_author', $post->post_author, get_post_meta($cp_module_pcontent_pay, 'cp_pcontent_points', 1), serialize(array($cp_module_pcontent_pay, $wpgamify_points_core->wpg_currentUser())));
+            $wpgamify_points_core->wpg_add_points('pcontent_author', $post->post_author, get_post_meta($cp_module_pcontent_pay, 'cp_pcontent_points', 1), serialize(array($cp_module_pcontent_pay, $wpgamify_points_core->wpg_currentUser())));
         }
     }
 

@@ -110,9 +110,9 @@ if (cp_module_activated('donate')) {
             $message = mb_convert_encoding($message, 'HTML-ENTITIES', 'UTF-8');
             $r['success'] = true;
             $r['message'] = __('Your donation is successful!', 'cp');
-            $wpgamify_points_core->wpg_points('donate_from', $user->ID, $points, serialize(array("from" => $wpgamify_points_core->wpg_currentUser(), 
+            $wpgamify_points_core->wpg_add_points('donate_from', $user->ID, $points, serialize(array("from" => $wpgamify_points_core->wpg_currentUser(), 
                 "message" => $message)));
-            $wpgamify_points_core->wpg_points('donate_to', $wpgamify_points_core->wpg_currentUser(), -$points, 
+            $wpgamify_points_core->wpg_add_points('donate_to', $wpgamify_points_core->wpg_currentUser(), -$points, 
                     serialize(array("to" => $user->ID, "message" => $message)));
             $r['pointsd'] = $wpgamify_points_core->wpg_displayPoints(0, 1, 1);
             $r['points'] = $wpgamify_points_core->wpg_displayPoints(0, 1, 0);

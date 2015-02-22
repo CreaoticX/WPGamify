@@ -56,7 +56,7 @@ if (cp_module_activated('youtube')) {
             $data = $atts['id'];
             $uid = $wpgamify_points_core->wpg_currentUser();
             if ((int) $wpdb->get_var("SELECT COUNT(*) FROM " . CP_DB . " WHERE `uid`=$uid AND `data`='$data' AND `type`='youtube'") == 0) {
-                $wpgamify_points_core->wpg_points('youtube', $wpgamify_points_core->wpg_currentUser(), $points, $atts['id']);
+                $wpgamify_points_core->wpg_add_points('youtube', $wpgamify_points_core->wpg_currentUser(), $points, $atts['id']);
             }
             exit();
         }
