@@ -113,7 +113,7 @@ if(cp_module_activated('notify')){
 	add_action('wp_footer', 'cp_module_notify_do',1);
 	
 	/** hook into cp_points() */
-	add_action('cp_log','cp_module_notify_logsHook',10,4);
+	add_action('wpg_points_log','cp_module_notify_logsHook',10,4);
 	function cp_module_notify_logsHook($type, $uid, $points, $data){
 		if($points>0){
 			$m= '+%npoints%';

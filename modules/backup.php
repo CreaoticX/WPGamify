@@ -116,7 +116,8 @@ if (cp_module_activated('backup')) {
                                 $uid = $u->ID;
                                 $curr_points = $u->cpoints;
                                 if ((int) $curr_points != $d[3]) {
-                                    cp_updatePoints($uid, $d[3]);
+                                    global $wpgamify_points_core;
+                                    $wpgamify_points_core->wpg_updatePoints($uid, $d[3]);
                                     $users_updated++;
                                 }
                                 $users_matched++;
