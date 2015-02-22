@@ -385,7 +385,8 @@ if (cp_module_activated('paypal')) {
                     die();
                 }
                 // process payment
-                cp_points('paypal', $uid, (int) $points, serialize(array('txn_id' => $txn_id, 'payer_email' => $payer_email, 'amt' => $payment_amount)));
+                global $wpgamify_points_core;
+                $wpgamify_points_core->wpg_points('paypal', $uid, (int) $points, serialize(array('txn_id' => $txn_id, 'payer_email' => $payer_email, 'amt' => $payment_amount)));
             } else if (strcmp($res, "INVALID") == 0) {
                 // invalid IPN
                 die();
