@@ -12,7 +12,7 @@ class GamifyBadgeIssued extends GamifyBase{
         $this->badge_template = new GamifyBadgeTemplate();
         $this->table = "";
         $this->key_id = "";
-        $this->v = array($this->key_id=>NULL,'name'=>NULL,'uid'=>NULL,'recipient'=>NULL,'email'=>NULL,'lastValidated'=>NULL,
+        $this->v = array($this->key_id=>NULL,'name'=>NULL,"slug"=>NULL,'uid'=>NULL,'recipient'=>NULL,'email'=>NULL,'lastValidated'=>NULL,
             'issuer_name'=>NULL,'issuer_url'=>NULL,'expires'=>NULL,"template"=>NULL,'award_status'=>NULL,'salt'=>NULL,
             'post_status'=>NULL, 'post_author'=>NULL, "evidence"=>NULL);
         $this->loadable_keys = array();
@@ -69,10 +69,11 @@ class GamifyBadgeIssued extends GamifyBase{
             $this->set_value('post_status', $post->post_status);
             $this->set_value('post_author', $post->post_author);
             $this->set_value('evidence', $post->content);
+            $this->set_value('slug', $post->content);
             $this->set_value("template", $template);
             $this->set_value("email", get_post_meta($post_id, 'wpgamify-award-email-address', true));
             $this->set_value("expires", get_post_meta($post_id, 'wpgamify-award-expires', true));
-            $this->set_value("expires", get_post_meta($post_id, 'wpgamify-award-status', true));
+            $this->set_value("award_status", get_post_meta($post_id, 'wpgamify-award-status', true));
             $this->set_value("salt", get_post_meta($post_id, 'wpgamify-award-salt', true));
             $this->set_value("name", $post->post_title );
             $this->set_value("issuer_url", get_permalink($post_id));
@@ -89,6 +90,7 @@ class GamifyBadgeIssued extends GamifyBase{
         $post = array(
             'post_content'   => $this->get_value("evidence"), // The full text of the post.
             'post_title'     => $this->get_value("name"), // The title of your post.
+            'post_slug'    => $this->get_value("slug"), // Default 'draft'.
             'post_status'    => $this->get_value("post_status"), // Default 'draft'.
             'post_type'      => $this->post_type, // Default 'post'.
             'post_author'    => $this->get_value("post_author"), // The user ID number of the author. Default is the current user ID.
@@ -110,13 +112,19 @@ class GamifyBadgeIssued extends GamifyBase{
         $meta_posts = array(
             "template"=>'wpgamify-award-choose-badge',
             "email"=>'wpgamify-award-email-address',
-            "expires"=>'wpgamify-award-expires'
+            "expires"=>'wpgamify-award-expires',
+            "award_status"=>"wpgamify-award-status"
             );
         foreach($meta_posts as $k => $v){
             $this->update_meta($v, $this->get_value($k));
         }
-        if (get_post_meta($post_id, 'wpgamify-award-status', true) == false)
-            add_post_meta($post_id, 'wpgamify-award-status', 'Awarded');
+        if($this->get_value("award_status") == NULL){
+            $post_status = get_post_status($post_id);
+            if (get_post_meta($post_id, 'wpgamify-award-status', true) == false &&
+                    $post_status == "publish"){
+                add_post_meta($post_id, 'wpgamify-award-status', 'Awarded');
+            }
+        }
 
         // Add the salt only the first time, and do not update if already exists
         if (get_post_meta($post_id, 'wpgamify-award-salt', true) == false) {
@@ -130,11 +138,11 @@ class GamifyBadgeIssued extends GamifyBase{
         if ($new_value && empty($old_value))
             add_post_meta($this->get_key_value(), $meta_key, $new_value, true);
         elseif (current_user_can('manage_options')) {
-            if ($new_value && $new_value != $old_value){
+            if (empty($new_value)){
+                delete_post_meta($this->get_key_value(), $meta_key, $old_value);
+            }elseif ($new_value && $new_value != $old_value){
                 delete_post_meta($this->get_key_value(), $meta_key, $old_value);
                 update_post_meta($this->get_key_value(), $meta_key, $new_value);
-            }elseif (empty($new_value)){
-                delete_post_meta($this->get_key_value(), $meta_key, $old_value);
             }
         }
     }

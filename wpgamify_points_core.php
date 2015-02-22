@@ -22,9 +22,9 @@ class WPGamify_Points_Core {
     /** Get number of points */
     function wpg_getPoints($uid,$custom='default') {
         if($custom == 'default'){
-            $points = get_user_meta($uid, 'wpg_points', 1);
+            $points = (int)get_user_meta($uid, 'wpg_points', 1);
         }else{
-            $points = get_user_meta($uid, 'wpg_points_'.$custom, 1);
+            $points = (int)get_user_meta($uid, 'wpg_points_'.$custom, 1);
         }
         if ($points == '') {
             return 0;
@@ -129,7 +129,7 @@ class WPGamify_Points_Core {
         global $wpdb;
         $wpdb->query("INSERT INTO `" . CP_DB . "` (`id`, `uid`, `type`, 'custom', `data`, `points`, `timestamp`) 
                                       VALUES (NULL, '" . $uid . "', '" . $type . "', '" . $custom . "', '" . $data . "', '" . $points . "', " . time() . ");");
-        do_action('wpg_points_log', $type, $uid, $points, $data,$custom);
+        do_action('wpg_points_log', $type, $uid, $points, $data, $custom);
         return true;
     }
 

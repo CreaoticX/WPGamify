@@ -449,7 +449,8 @@ EOHTML;
                     $bi->set_value("email", $email);
                     $bi->set_value("evidence", $evidence);
                     $bi->set_value("post_author", $user_ID);
-                    $bi->set_value("name", $this->_generate_slug());
+                    $bi->set_value("name", $this->_generate_title($badge_id));
+                    $bi->set_value("slug", $this->_generate_slug());
                     $bi->set_value("post_status", 'publish');
                     $bi->set_value("template", $badge_id);
                     $bi->set_value("expires", $expires);
@@ -752,15 +753,17 @@ EOHTML;
         if (!current_user_can($post_type->cap->edit_post, $post_id)){
             return $post_id;
         }
-
         $bi = new GamifyBadgeIssued();
         $bi->load_by_key($post_id);
         $bi->set_value("template", filter_input(INPUT_POST, 'wpgamify-award-choose-badge'));
         $bi->set_value("email", filter_input(INPUT_POST, 'wpgamify-award-email-address'));
         $bi->set_value("expires", filter_input(INPUT_POST, 'wpgamify-award-expires'));
+        if($bi->get_value("post_status")=="publish"  && $bi->get_value("award_status") == NULL){
+            $bi->set_value("award_status", "Awarded");
+        }
         $bi->save_meta();
         if($bi->get_value("post_status")=="publish"){
-            do_action("wpgamify_issue_badge");
+            do_action("wpgamify_issue_badge",$post_id);
         }
     }
 
