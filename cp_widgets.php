@@ -8,7 +8,7 @@ class cp_pointsWidget extends WP_Widget {
  
 	// constructor
 	function cp_pointsWidget() {
-		parent::WP_Widget('cp_pointsWidget', 'CubePoints', array('description' => 'Display the points of the current logged in user.'));	
+		parent::WP_Widget('cp_pointsWidget', 'WPGamify Display Points', array('description' => 'Display the points of the current logged in user.'));	
 	}
  
 	// widget main
@@ -94,7 +94,7 @@ class cp_topUsersWidget extends WP_Widget {
  
 	// constructor
 	function cp_topUsersWidget() {
-		parent::WP_Widget('cp_topUsersWidget', 'CubePoints Top Users', array('description' => 'Use this widget to showcase the users with the most points.'));	
+		parent::WP_Widget('cp_topUsersWidget', 'WPGamify Top Users', array('description' => 'Use this widget to showcase the users with the most points.'));	
 	}
  
 	// widget main

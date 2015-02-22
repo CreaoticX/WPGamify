@@ -341,36 +341,44 @@ function cp_add_points_user_suggest() {
 add_action('wp_ajax_cp_add_points_user_query', 'cp_add_points_user_query');
 
 function cp_add_points_user_query() {
-
     header("Content-Type: application/json");
-
-    if (!current_user_can('manage_options') || $_REQUEST['q'] == '') {
-        $response = json_encode(array());
-        echo $response;
-        exit;
+    $check = 5;
+    if ($_REQUEST['q'] == '') {
+        $check = 1;
     }
 
-    global $wpdb;
-    if(is_numeric($_REQUEST['q'])){
-        $id = (int)trim($_REQUEST['q']);
-        $user = $wpdb->get_row($wpdb->prepare('SELECT * from `' . $wpdb->prefix . 'users` WHERE `ID` = %d LIMIT 1',$id), ARRAY_A);
-    }else{
-        $user = $wpdb->get_row($wpdb->prepare('SELECT * from `' . $wpdb->prefix . 'users` WHERE `user_login` LIKE %s LIMIT 1',trim($_REQUEST['q'])), ARRAY_A);
+    if (!current_user_can('manage_options') ) {
+        $check = 2;
     }
+    
+    if($check == 5){
+        global $wpdb;
+        if(is_numeric($_REQUEST['q'])){
+            $check = 3;
+            $id = (int)trim($_REQUEST['q']);
+            $user = $wpdb->get_row($wpdb->prepare('SELECT * from `' . $wpdb->prefix . 'users` WHERE `ID` = %d LIMIT 1',$id), ARRAY_A);
+        }else{
+            $check = 4;
+            $query = $wpdb->prepare('SELECT * from `' . $wpdb->prefix . 'users` WHERE `user_login` LIKE "%%%s%%" LIMIT 1',trim($_REQUEST['q']));
+            $user = $wpdb->get_row($query, ARRAY_A);
+        }
+    }
+    
+    if($check < 3 ){
+        $response = json_encode(array($check));
         
-    if ($user['ID'] == null) {
-        $response = json_encode(array());
-        echo $response;
-        exit;
+    }elseif ($user['ID'] == null){
+        $response = json_encode($query);
+    }else{
+        $response = json_encode(array(
+            'id' => $user['ID'],
+            'user_login' => $user['user_login'],
+            'display_name' => $user['display_name'],
+            'email' => $user['user_email'],
+            'points' => cp_getPoints($user['ID']),
+            'hash' => md5(trim(strtolower($user['user_email'])))
+        ));
     }
-    $response = json_encode(array(
-        'id' => $user['ID'],
-        'user_login' => $user['user_login'],
-        'display_name' => $user['display_name'],
-        'email' => $user['user_email'],
-        'points' => cp_getPoints($user['ID']),
-        'hash' => md5(trim(strtolower($user['user_email'])))
-    ));
     echo $response;
     exit;
 }

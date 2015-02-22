@@ -5,7 +5,8 @@
 
 if(get_option('cp_db_version')<1.3){
 	if(is_admin()){
-		cp_install();
+                $wpg_install = new WPGamify_Install();
+                $wpg_install->install();
 		update_option('cp_db_version', 1.3);
 		global $wpdb;
 		if($wpdb->get_var("SHOW TABLES LIKE '".$wpdb->base_prefix."cubepoints'") == $wpdb->base_prefix."cubepoints" ){
@@ -37,7 +38,7 @@ if(get_option('cp_db_version')<1.3){
 						$left[]=$result->type;
 					}
 				}
-				echo '<div class="updated"><p><strong>'.__('CubePoints Updated').': </strong>'.__('Your database has been updated and  ', 'cp').' '.$count.' '.__('out of', 'cp').' '.$count1.' '.__('log items were imported', 'cp').'.</p></div>';
+				echo '<div class="updated"><p><strong>'.__('WPGamify Updated').': </strong>'.__('Your database has been updated and  ', 'cp').' '.$count.' '.__('out of', 'cp').' '.$count1.' '.__('log items were imported', 'cp').'.</p></div>';
 				$left = array_unique($left);
 				if(count($left)>0){
 					echo '<div class="error"><p><strong>'.__('The following log types were not imported', 'cp').':</strong> '.implode($left,', ').'</p></div>';
