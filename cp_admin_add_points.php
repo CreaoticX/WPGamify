@@ -57,17 +57,17 @@ function cp_admin_add_points()
 			cp_add_points_search();
 			return false;
 		});
-		jQuery("#cp_add_points_user").autocomplete({
-			url: ajaxurl,
-			extraParams: { action: 'cp_add_points_user_suggest' },
-			matchSubset: 0,
-			showResult: function(value, data) {
-				return '<div class="cp_add_points_user_suggest_result" style="background-image:url(https://secure.gravatar.com/avatar/'+data[3]+'?s=25);"><span class="cp_add_points_user_suggest_name">'+value+'</span><br /><span class="cp_add_points_user_suggest_email">'+data[2]+'</span></div>';
-			},
-			onItemSelect: function(item) {
-				cp_add_points_search();
-			}
-		});
+//		jQuery("#cp_add_points_user").autocomplete({
+//			url: ajaxurl,
+//			extraParams: { action: 'cp_add_points_user_suggest' },
+//			matchSubset: 0,
+//			showResult: function(value, data) {
+//				return '<div class="cp_add_points_user_suggest_result" style="background-image:url(https://secure.gravatar.com/avatar/'+data[3]+'?s=25);"><span class="cp_add_points_user_suggest_name">'+value+'</span><br /><span class="cp_add_points_user_suggest_email">'+data[2]+'</span></div>';
+//			},
+//			onItemSelect: function(item) {
+//				cp_add_points_search();
+//			}
+//		});
 		function cp_add_points_search(){
 			q = jQuery('#cp_add_points_user').val();
 			if(q==''){

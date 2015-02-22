@@ -17,6 +17,8 @@ add_action('init','gamify_enqueue_admin_styles_scripts');
 function gamify_enqueue_admin_styles_scripts() {
     /** Register autocomplete script and stylesheet for admin pages */
     wp_enqueue_script("gamify-jquery-ui-autocomplete",plugins_url() . '/gamify/js/jquery-ui.min.js', array('jquery'),NULL,FALSE);
+    //Non minified version for debugging
+    //wp_enqueue_script("gamify-jquery-ui-autocomplete",plugins_url() . '/gamify/js/jquery-ui.js', array('jquery'),NULL,FALSE);
     wp_enqueue_style( 'jquery-ui-autocomplete-css', plugins_url() . '/gamify/css/jquery-ui.min.css' );
     wp_enqueue_style( 'jquery-ui-autocomplete-structure-css', plugins_url() . '/gamify/css/jquery-ui.structure.min.css' );
     wp_enqueue_style( 'jquery-ui-autocomplete-theme-css', plugins_url() . '/gamify/css/jquery-ui.theme.min.css' );
