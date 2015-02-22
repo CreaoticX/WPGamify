@@ -1,5 +1,5 @@
 <?php
-
+//Need 
 //Prevents file from being accessed directly.
 if (!defined('ABSPATH'))
     exit;
@@ -20,8 +20,12 @@ class WPGamify_Points_Core {
     }
 
     /** Get number of points */
-    function wpg_getPoints($uid) {
-        $points = get_user_meta($uid, 'cpoints', 1);
+    function wpg_getPoints($uid,$custom='default') {
+        if($custom == 'default'){
+            $points = get_user_meta($uid, 'wpg_points', 1);
+        }else{
+            $points = get_user_meta($uid, 'wpg_points_'.$custom, 1);
+        }
         if ($points == '') {
             return 0;
         } else {
@@ -30,29 +34,39 @@ class WPGamify_Points_Core {
     }
 
     /** Update points */
-    function wpg_updatePoints($uid, $points) {
+    function wpg_updatePoints($uid, $points,$custom='default') {
         // no negative points 
         if ($points < 0) {
             $points = 0;
         }
-        update_user_meta($uid, 'wpg_points', $points);
+        if($custom == 'default'){
+            update_user_meta($uid, 'wpg_points', $points);
+        }else{
+            update_user_meta($uid, 'wpg_points_'.$custom, $points);
+        }
     }
 
     /** Alter points */
-    function wpg_alterPoints($uid, $points) {
-        $this->wpg_updatePoints($uid, $this->wpg_getPoints($uid) + $points);
+    function wpg_alterPoints($uid, $points,$custom='default') {
+        $this->wpg_updatePoints($uid, $this->wpg_getPoints($uid) + $points,$custom);
     }
 
     /** Formats points with prefix and suffix */
-    function wpg_formatPoints($points) {
+    function wpg_formatPoints($points,$custom='default') {
         if ($points == 0) {
             $points = '0';
         }
-        return get_option('cp_prefix') . $points . get_option('cp_suffix');
+        $points_output = $points;
+        if($custom == 'default'){
+            $points_output = get_option('cp_prefix') . $points . get_option('cp_suffix');
+        }else{
+            $points_output = apply_filters('wpg_formatPoints',$points,$custom);
+        }
+        return $points_output;
     }
 
     /** Display points */
-    function wpg_displayPoints($uid = 0, $return = 0, $format = 1) {
+    function wpg_displayPoints($uid = 0, $return = 0, $format = 1,$custom='default') {
         if ($uid == 0) {
             if (!is_user_logged_in()) {
                 return false;
@@ -61,7 +75,7 @@ class WPGamify_Points_Core {
         }
 
         if ($format == 1) {
-            $fpoints = $this->wpg_formatPoints($this->wpg_getPoints($uid));
+            $fpoints = $this->wpg_formatPoints($this->wpg_getPoints($uid,$custom),$custom);
         } else {
             $fpoints = $this->wpg_getPoints($uid);
         }
@@ -74,7 +88,7 @@ class WPGamify_Points_Core {
     }
 
     /** Get points of all users into an array */
-    function wpg_getAllPoints($amt = 0, $filter_users = array(), $start = 0) {
+    function wpg_getAllPoints($amt = 0, $filter_users = array(), $start = 0,$custom='default') {
         global $wpdb;
         if ($amt > 0) {
             $limit = ' LIMIT ' . $start . ',' . $amt;
@@ -85,10 +99,15 @@ class WPGamify_Points_Core {
             $extraquery .= implode("' AND " . $wpdb->base_prefix . "users.user_login != '", $filter_users);
             $extraquery .= '\' ';
         }
+        if($custom == 'default'){
+            $point_type = 'wpg_points';
+        }else{
+            $point_type = 'wpg_points_'.$custom;
+        }
         $array = $wpdb->get_results('SELECT ' . $wpdb->base_prefix . 'users.id, ' . $wpdb->base_prefix . 'users.user_login, ' . $wpdb->base_prefix . 'users.display_name, ' . $wpdb->base_prefix . 'usermeta.meta_value 
                     FROM `' . $wpdb->base_prefix . 'users` 
                     LEFT JOIN `' . $wpdb->base_prefix . 'usermeta` ON ' . $wpdb->base_prefix . 'users.id = ' . $wpdb->base_prefix . 'usermeta.user_id 
-                    AND ' . $wpdb->base_prefix . 'usermeta.meta_key=\'' . 'cpoints' . '\'' . $extraquery . ' 
+                    AND ' . $wpdb->base_prefix . 'usermeta.meta_key=\'' . $point_type . '\'' . $extraquery . ' 
                     ORDER BY ' . $wpdb->base_prefix . 'usermeta.meta_value+0 DESC'
                 . $limit . ';'
                 , ARRAY_A);
@@ -99,7 +118,7 @@ class WPGamify_Points_Core {
     }
 
     /** Adds transaction to logs database */
-    function wpg_points_log($type, $uid, $points, $data) {
+    function wpg_points_log($type, $uid, $points, $data,$custom='default') {
         $userinfo = get_userdata($uid);
         if ($userinfo->user_login == '') {
             return false;
@@ -108,25 +127,25 @@ class WPGamify_Points_Core {
             return false;
         }
         global $wpdb;
-        $wpdb->query("INSERT INTO `" . CP_DB . "` (`id`, `uid`, `type`, `data`, `points`, `timestamp`) 
-                                      VALUES (NULL, '" . $uid . "', '" . $type . "', '" . $data . "', '" . $points . "', " . time() . ");");
-        do_action('wpg_points_log', $type, $uid, $points, $data);
+        $wpdb->query("INSERT INTO `" . CP_DB . "` (`id`, `uid`, `type`, 'custom', `data`, `points`, `timestamp`) 
+                                      VALUES (NULL, '" . $uid . "', '" . $type . "', '" . $custom . "', '" . $data . "', '" . $points . "', " . time() . ");");
+        do_action('wpg_points_log', $type, $uid, $points, $data,$custom);
         return true;
     }
 
     /** Alter points and add to logs */
-    function wpg_points($type, $uid, $points, $data) {
-        $points = apply_filters('wpg_points', $points, $type, $uid, $data);
-        $this->wpg_alterPoints($uid, $points);
-        $this->wpg_points_log($type, $uid, $points, $data);
+    function wpg_points($type, $uid, $points, $data,$custom='default') {
+        $points = apply_filters('wpg_points', $points, $type, $uid, $data,$custom);
+        $this->wpg_alterPoints($uid, $points,$custom);
+        $this->wpg_points_log($type, $uid, $points, $data,$custom);
     }
 
     /** Set points and add to logs */
-    function wpg_points_set($type, $uid, $points, $data) {
-        $points = apply_filters('wpg_points_set', $points, $type, $uid, $data);
+    function wpg_points_set($type, $uid, $points, $data,$custom='default') {
+        $points = apply_filters('wpg_points_set', $points, $type, $uid, $data,$custom);
         $difference = $points - $this->wpg_getPoints($uid);
-        $this->wpg_updatePoints($uid, $points);
-        $this->wpg_log($type, $uid, $difference, $data);
+        $this->wpg_updatePoints($uid, $points,$custom);
+        $this->wpg_log($type, $uid, $difference, $data,$custom);
     }
 
     /** Get total number of posts */

@@ -18,7 +18,7 @@ if (cp_module_activated('backup')) {
         $data = $wpdb->get_results('SELECT ' . $wpdb->base_prefix . 'users.id, ' . $wpdb->base_prefix . 'users.user_login, ' . $wpdb->base_prefix . 'users.user_email, ' . $wpdb->base_prefix . 'usermeta.meta_value 
 			FROM `' . $wpdb->base_prefix . 'users` 
 			LEFT JOIN `' . $wpdb->base_prefix . 'usermeta` ON ' . $wpdb->base_prefix . 'users.id = ' . $wpdb->base_prefix . 'usermeta.user_id 
-			AND ' . $wpdb->base_prefix . 'usermeta.meta_key=\'' . 'cpoints' . '\'' . $extraquery . ' 
+			AND ' . $wpdb->base_prefix . 'usermeta.meta_key=\'' . 'wpg_points' . '\'' . $extraquery . ' 
 			ORDER BY ' . $wpdb->base_prefix . 'users.id ASC'
                 . $limit . ';'
                 , ARRAY_N);
@@ -27,7 +27,7 @@ if (cp_module_activated('backup')) {
             $data[$x][3] = (int) $data[$x][3];
         }
         
-        $fp = filter_input(INPUT_GET, 'wpgamify-fmt-choose-badge');
+        $fp = filter_input(INPUT_GET, 'fmt');
         switch ($fp) {
 
             default:
@@ -114,7 +114,7 @@ if (cp_module_activated('backup')) {
                             }
                             if ($u) {
                                 $uid = $u->ID;
-                                $curr_points = $u->cpoints;
+                                $curr_points = $u->wpg_points;
                                 if ((int) $curr_points != $d[3]) {
                                     global $wpgamify_points_core;
                                     $wpgamify_points_core->wpg_updatePoints($uid, $d[3]);

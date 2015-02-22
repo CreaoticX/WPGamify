@@ -27,6 +27,7 @@ class WPGamify_Install {
 			  id bigint(20) NOT NULL AUTO_INCREMENT,
 			  uid bigint(20) NOT NULL,
 			  type VARCHAR(256) NOT NULL,
+                          custom varchar(256) NOT NULL DEFAULT 'default',
 			  data TEXT NOT NULL,
 			  points bigint(20) NOT NULL,
 			  timestamp bigint(20) NOT NULL,
