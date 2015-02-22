@@ -47,9 +47,6 @@ require_once 'cp_core.php';
 /** Includes plugin hooks */
 require_once 'cp_hooks.php';
 
-/** Includes plugin APIs */
-require_once 'cp_api.php';
-
 /** Includes widgets */
 require_once 'cp_widgets.php';
 
