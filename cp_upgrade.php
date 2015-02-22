@@ -29,7 +29,7 @@ if(get_option('cp_db_version')<1.3){
 						if($result->type=='login'){
 							$result->type = 'dailypoints';
 						}
-						$wpdb->query("INSERT INTO `".CP_DB."` (`id`, `uid`, `type`, `data`, `points`, `timestamp`) VALUES (NULL, '".$result->uid."', '".$result->type."', ".$result->source.", '".$result->points."', ".$result->timestamp.");");
+						$wpdb->query("INSERT INTO `".CP_DB."` (`id`, `uid`, `type`, 'custom', `data`, `points`, `timestamp`) VALUES (NULL, '".$result->uid."', '".$result->type."', ".$result->custom."', ".$result->source.", '".$result->points."', ".$result->timestamp.");");
 						// Not removing entries from old database
 						//$wpdb->query("DELETE FROM ".$wpdb->base_prefix."cubepoints WHERE id=".$result->id);
 						$count++;

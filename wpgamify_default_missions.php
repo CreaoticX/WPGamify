@@ -6,6 +6,8 @@ class WPGamify_Default_Missions{
     
     function __construct() {
         add_action('init', array($this, 'init'));
+        add_action( 'wpg_points_log', array($this, 'points_to_badges_action'), 15, 5);
+        add_action( 'wpgamify_issue_badge', array($this, 'badges_to_points_action'), 15, 1);
         $this->default_missions['points_to_badges']='Points to Badges';
         $this->default_missions['badges_to_points']='Badges to Points';
     }
@@ -65,6 +67,38 @@ class WPGamify_Default_Missions{
         $this->update_meta($post_id, 'wpgamify_ptb_evidence', filter_input(INPUT_POST, 'wpgamify_ptb_evidence'));
     }
     
+    function points_to_badges_action($type, $uid, $points, $data, $custom){
+        if($custom == 'default'){
+            global $wpgamify_points_core;
+            global $wpgamify_mission_schema;
+            global $wpgamify_badge_issued_schema;
+            $post_type = $wpgamify_mission_schema->get_post_type_name;
+            $points = $wpgamify_points_core->wpg_getPoints($uid);
+            $myquery = new WP_Query( "post_type=$post_type&meta_key=wpgamify_ptb_points&meta_value>=$points&order=ASC" );
+            while ( $myquery->have_posts() ){
+                $myquery->the_post();
+                $post_id = get_the_ID();
+                $level = (int)get_post_meta($post_id,'wpgamify_ptb_points',true);
+                if($points >= $level){
+                    $template_id = (int)get_post_meta($post_id,'wpgamify_ptb_badge',true);
+                    $evidence = get_post_meta($post_id,'wpgamify_ptb_evidence',true);
+                    $user = get_userdata($uid);
+                    $admin_email = get_option( 'admin_email' );
+                    $admin = get_user_by( "email", $admin_email );
+                    $bi = new GamifyBadgeIssued();
+                    $bi->set_badge_template($template_id);
+                    $bi->set_value("email", $user->user_email);
+                    $bi->set_value("evidence", $evidence);
+                    $bi->set_value("post_author", $admin->ID);
+                    $bi->set_value("post_status", "publish");
+                    $bi->set_value("name", $wpgamify_badge_issued_schema->_generate_title($template_id));
+                    $bi->set_value("slug", $wpgamify_badge_issued_schema->_generate_slug());
+                    $bi->update_db();
+                }
+            }
+        }
+    }
+
     private function badges_to_points_ouput($start,$post_id){
         $start .= '<p>'.__("Earning the", "wpgamify").$this->badge_output(get_post_meta($post_id,'wpgamify_btp_badge',true),'btp').
                 __(" Badge ", "wpgamify").__(" earns ","wpgamify").get_option('cp_prefix').
@@ -79,6 +113,26 @@ class WPGamify_Default_Missions{
         $this->update_meta($post_id, 'wpgamify_btp_badge', filter_input(INPUT_POST, 'wpgamify_btp_badge'));
     }
     
+    function badges_to_points_action($post_id){
+        global $wpgamify_points_core;
+        global $wpgamify_mission_schema;
+        $post_type = $wpgamify_mission_schema->get_post_type_name;
+        $bi = new GamifyBadgeIssued();
+        $bi->load_by_key($post_id);
+        $email =  $bi->get_value("email");
+        $user = get_user_by( "email", $email );
+        if($user){
+            $badge_id = $bi->get_value("template");
+            $myquery = new WP_Query( "post_type=$post_type&meta_key=wpgamify_btp_badge&meta_value=$badge_id&order=ASC" );
+            while ( $myquery->have_posts() ){
+                $myquery->the_post();
+                $post_id = get_the_ID();
+                $points = (int)get_post_meta($post_id,'wpgamify_btp_points',true);
+                $wpgamify_points_core->wpg_add_points("badge",$user->ID,$points,"Earned ".$bi->get_template_value("name"));
+            }
+        }
+    }
+
     private function badge_output($award_badge_id,$split){
         global $wpgamify_badge_template_schema;
         $badge_out = '';
@@ -115,11 +169,11 @@ class WPGamify_Default_Missions{
         if ($new_value && empty($old_value))
             add_post_meta($post_id, $meta_key, $new_value, true);
         elseif (current_user_can('manage_options')) {
-            if ($new_value && $new_value != $old_value){
-                delete_post_meta($post_id, $meta_key, $old_value);
-                update_post_meta($post_id, $meta_key, $new_value);
-            }elseif (empty($new_value)){
-                delete_post_meta($post_id, $meta_key, $old_value);
+            if (empty($new_value)){
+                delete_post_meta($this->get_key_value(), $meta_key, $old_value);
+            }elseif ($new_value && $new_value != $old_value){
+                delete_post_meta($this->get_key_value(), $meta_key, $old_value);
+                update_post_meta($this->get_key_value(), $meta_key, $new_value);
             }
         }
     }

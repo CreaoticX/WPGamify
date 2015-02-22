@@ -31,6 +31,6 @@ if(cp_module_activated('pmultiply')){
 	}
 	add_action('cp_config_process','cp_module_pmultiply_config_process');
 	
-	add_filter('cp_points',create_function('$points', 'return '.get_option('cp_module_pmultiply_multiplier').'*$points;'),10);
+	add_filter('wpg_add_points',create_function('$points', 'return '.get_option('cp_module_pmultiply_multiplier').'*$points;'),10);
 }
 ?>

@@ -1,5 +1,5 @@
 <?php
-
+//Need 
 //Prevents file from being accessed directly.
 if (!defined('ABSPATH'))
     exit;
@@ -12,7 +12,7 @@ class WPGamify_Points_Core {
     }
 
     /** Get current logged in user */
-    function cp_currentUser() {
+    function wpg_currentUser() {
         require_once(ABSPATH . WPINC . '/pluggable.php');
         global $current_user;
         get_currentuserinfo();
@@ -20,8 +20,12 @@ class WPGamify_Points_Core {
     }
 
     /** Get number of points */
-    function cp_getPoints($uid) {
-        $points = get_user_meta($uid, 'cpoints', 1);
+    function wpg_getPoints($uid,$custom='default') {
+        if($custom == 'default'){
+            $points = (int)get_user_meta($uid, 'wpg_points', 1);
+        }else{
+            $points = (int)get_user_meta($uid, 'wpg_points_'.$custom, 1);
+        }
         if ($points == '') {
             return 0;
         } else {
@@ -30,40 +34,50 @@ class WPGamify_Points_Core {
     }
 
     /** Update points */
-    function cp_updatePoints($uid, $points) {
+    function wpg_updatePoints($uid, $points,$custom='default') {
         // no negative points 
         if ($points < 0) {
             $points = 0;
         }
-        update_user_meta($uid, 'cpoints', $points);
+        if($custom == 'default'){
+            update_user_meta($uid, 'wpg_points', $points);
+        }else{
+            update_user_meta($uid, 'wpg_points_'.$custom, $points);
+        }
     }
 
     /** Alter points */
-    function cp_alterPoints($uid, $points) {
-        cp_updatePoints($uid, cp_getPoints($uid) + $points);
+    function wpg_alterPoints($uid, $points,$custom='default') {
+        $this->wpg_updatePoints($uid, $this->wpg_getPoints($uid) + $points,$custom);
     }
 
     /** Formats points with prefix and suffix */
-    function cp_formatPoints($points) {
+    function wpg_formatPoints($points,$custom='default') {
         if ($points == 0) {
             $points = '0';
         }
-        return get_option('cp_prefix') . $points . get_option('cp_suffix');
+        $points_output = $points;
+        if($custom == 'default'){
+            $points_output = get_option('cp_prefix') . $points . get_option('cp_suffix');
+        }else{
+            $points_output = apply_filters('wpg_formatPoints',$points,$custom);
+        }
+        return $points_output;
     }
 
     /** Display points */
-    function cp_displayPoints($uid = 0, $return = 0, $format = 1) {
+    function wpg_displayPoints($uid = 0, $return = 0, $format = 1,$custom='default') {
         if ($uid == 0) {
             if (!is_user_logged_in()) {
                 return false;
             }
-            $uid = cp_currentUser();
+            $uid = $this->wpg_currentUser();
         }
 
         if ($format == 1) {
-            $fpoints = cp_formatPoints(cp_getPoints($uid));
+            $fpoints = $this->wpg_formatPoints($this->wpg_getPoints($uid,$custom),$custom);
         } else {
-            $fpoints = cp_getPoints($uid);
+            $fpoints = $this->wpg_getPoints($uid);
         }
 
         if (!$return) {
@@ -74,7 +88,7 @@ class WPGamify_Points_Core {
     }
 
     /** Get points of all users into an array */
-    function cp_getAllPoints($amt = 0, $filter_users = array(), $start = 0) {
+    function wpg_getAllPoints($amt = 0, $filter_users = array(), $start = 0,$custom='default') {
         global $wpdb;
         if ($amt > 0) {
             $limit = ' LIMIT ' . $start . ',' . $amt;
@@ -85,21 +99,26 @@ class WPGamify_Points_Core {
             $extraquery .= implode("' AND " . $wpdb->base_prefix . "users.user_login != '", $filter_users);
             $extraquery .= '\' ';
         }
+        if($custom == 'default'){
+            $point_type = 'wpg_points';
+        }else{
+            $point_type = 'wpg_points_'.$custom;
+        }
         $array = $wpdb->get_results('SELECT ' . $wpdb->base_prefix . 'users.id, ' . $wpdb->base_prefix . 'users.user_login, ' . $wpdb->base_prefix . 'users.display_name, ' . $wpdb->base_prefix . 'usermeta.meta_value 
                     FROM `' . $wpdb->base_prefix . 'users` 
                     LEFT JOIN `' . $wpdb->base_prefix . 'usermeta` ON ' . $wpdb->base_prefix . 'users.id = ' . $wpdb->base_prefix . 'usermeta.user_id 
-                    AND ' . $wpdb->base_prefix . 'usermeta.meta_key=\'' . 'cpoints' . '\'' . $extraquery . ' 
+                    AND ' . $wpdb->base_prefix . 'usermeta.meta_key=\'' . $point_type . '\'' . $extraquery . ' 
                     ORDER BY ' . $wpdb->base_prefix . 'usermeta.meta_value+0 DESC'
                 . $limit . ';'
                 , ARRAY_A);
         foreach ($array as $x => $y) {
-            $a[$x] = array("id" => $y['id'], "user" => $y['user_login'], "display_name" => $y['display_name'], "points" => ($y['meta_value'] == 0) ? 0 : $y['meta_value'], "points_formatted" => cp_formatPoints($y['meta_value']));
+            $a[$x] = array("id" => $y['id'], "user" => $y['user_login'], "display_name" => $y['display_name'], "points" => ($y['meta_value'] == 0) ? 0 : $y['meta_value'], "points_formatted" => $this->wpg_formatPoints($y['meta_value']));
         }
         return $a;
     }
 
     /** Adds transaction to logs database */
-    function cp_log($type, $uid, $points, $data) {
+    function wpg_points_log($type, $uid, $points, $data,$custom='default') {
         $userinfo = get_userdata($uid);
         if ($userinfo->user_login == '') {
             return false;
@@ -108,41 +127,41 @@ class WPGamify_Points_Core {
             return false;
         }
         global $wpdb;
-        $wpdb->query("INSERT INTO `" . CP_DB . "` (`id`, `uid`, `type`, `data`, `points`, `timestamp`) 
-                                      VALUES (NULL, '" . $uid . "', '" . $type . "', '" . $data . "', '" . $points . "', " . time() . ");");
-        do_action('cp_log', $type, $uid, $points, $data);
+        $wpdb->query("INSERT INTO `" . CP_DB . "` (`id`, `uid`, `type`, 'custom', `data`, `points`, `timestamp`) 
+                                      VALUES (NULL, '" . $uid . "', '" . $type . "', '" . $custom . "', '" . $data . "', '" . $points . "', " . time() . ");");
+        do_action('wpg_points_log', $type, $uid, $points, $data, $custom);
         return true;
     }
 
     /** Alter points and add to logs */
-    function cp_points($type, $uid, $points, $data) {
-        $points = apply_filters('cp_points', $points, $type, $uid, $data);
-        cp_alterPoints($uid, $points);
-        cp_log($type, $uid, $points, $data);
+    function wpg_add_points($type, $uid, $points, $data,$custom='default') {
+        $points = apply_filters('wpg_add_points', $points, $type, $uid, $data,$custom);
+        $this->wpg_alterPoints($uid, $points,$custom);
+        $this->wpg_points_log($type, $uid, $points, $data,$custom);
     }
 
     /** Set points and add to logs */
-    function cp_points_set($type, $uid, $points, $data) {
-        $points = apply_filters('cp_points_set', $points, $type, $uid, $data);
-        $difference = $points - cp_getPoints($uid);
-        cp_updatePoints($uid, $points);
-        cp_log($type, $uid, $difference, $data);
+    function wpg_points_set($type, $uid, $points, $data,$custom='default') {
+        $points = apply_filters('wpg_points_set', $points, $type, $uid, $data,$custom);
+        $difference = $points - $this->wpg_getPoints($uid);
+        $this->wpg_updatePoints($uid, $points,$custom);
+        $this->wpg_log($type, $uid, $difference, $data,$custom);
     }
 
     /** Get total number of posts */
-    function cp_getPostCount($id) {
+    function wpg_getPostCount($id) {
         global $wpdb;
         return (int) $wpdb->get_var('SELECT count(id) FROM `' . $wpdb->base_prefix . 'posts` where `post_type`=\'post\' and `post_status`=\'publish\' and `post_author`=' . $id);
     }
 
     /** Get total number of comments */
-    function cp_getCommentCount($id) {
+    function wpg_getCommentCount($id) {
         global $wpdb;
         return (int) $wpdb->get_var('SELECT count(comment_ID) FROM `' . $wpdb->base_prefix . 'comments` where `user_id`=' . $id);
     }
 
     /** Function to truncate a long string */
-    function cp_truncate($string, $length, $stopanywhere = false) {
+    function wpg_truncate($string, $length, $stopanywhere = false) {
         $string = str_replace('"', '&quot;', strip_tags($string));
 
         //truncates a string to a certain char length, stopping on a word if not specified otherwise.
@@ -161,7 +180,7 @@ class WPGamify_Points_Core {
     }
 
     /** Function to register modules */
-    function cp_module_register($module, $id, $version, $author, $author_url, $plugin_url, $description, $can_deactivate) {
+    function wpg_module_register($module, $id, $version, $author, $author_url, $plugin_url, $description, $can_deactivate) {
         if ($module == '' || $id == '' || $version == '' || $description == '') {
             return false;
         }
@@ -170,7 +189,7 @@ class WPGamify_Points_Core {
     }
 
     /** Function to check module activation status */
-    function cp_module_activated($id) {
+    function wpg_module_activated($id) {
         if (get_option('cp_module_activation_' . $id) != false) {
             return true;
         } else {
@@ -179,12 +198,12 @@ class WPGamify_Points_Core {
     }
 
     /** Function to activate or deactivate module */
-    function cp_module_activation_set($id, $status) {
+    function wpg_module_activation_set($id, $status) {
         update_option('cp_module_activation_' . $id, $status);
     }
 
     /** Function to include all modules in the modules folder */
-    function cp_modules_include() {
+    function wpg_modules_include() {
         foreach (glob(ABSPATH . PLUGINDIR . '/' . dirname(plugin_basename(__FILE__)) . "/modules/*.php") as $filename) {
             require_once($filename);
         }
@@ -194,14 +213,14 @@ class WPGamify_Points_Core {
     }
 
     /** Function to cache module versions and run activation hook on module update */
-    function cp_modules_updateCheck() {
+    function wpg_modules_updateCheck() {
         global $cp_module;
         $module_ver_cache = unserialize(get_option('cp_moduleVersions'));
         $module_ver = array();
         foreach ($cp_module as $mod) {
             $module_ver[$mod['id']] = $mod['version'];
             // check for change in version and run module activation hook
-            if (cp_module_activated($mod['id'])) {
+            if ($this->wpg_module_activated($mod['id'])) {
                 if ($module_ver_cache[$mod['id']] != $mod['version']) {
                     if (!did_action('cp_module_' . $mod['id'] . '_activate')) {
                         do_action('cp_module_' . $mod['id'] . '_activate');

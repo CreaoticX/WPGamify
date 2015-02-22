@@ -77,7 +77,8 @@ if (cp_module_activated('donate')) {
         $post_message = filter_input(INPUT_POST, 'message');
         $message = htmlentities(stripslashes($post_message), ENT_QUOTES, 'UTF-8');
         $user = get_user_by('id', $recipient);
-
+        
+        global $wpgamify_points_core;
         if (!is_user_logged_in()) {
             $r['success'] = false;
             $r['message'] = __('You must be logged in to make a donation!', 'cp');
@@ -87,7 +88,7 @@ if (cp_module_activated('donate')) {
         } else if ($user->ID == '') {
             $r['success'] = false;
             $r['message'] = __('You have entered an invalid recipient!', 'cp');
-        } else if ($user->ID == cp_currentUser()) {
+        } else if ($user->ID == $wpgamify_points_core->wpg_currentUser()) {
             $r['success'] = false;
             $r['message'] = __('You cannot donate to yourself!', 'cp');
         } else if (!is_numeric($points)) {
@@ -99,7 +100,7 @@ if (cp_module_activated('donate')) {
         } else if ((int) $points != (float) $points) {
             $r['success'] = false;
             $r['message'] = __('You have entered an invalid number of points!', 'cp');
-        } else if ((int) $points > (int) cp_getPoints(cp_currentUser())) {
+        } else if ((int) $points > (int) $wpgamify_points_core->wpg_getPoints($wpgamify_points_core->wpg_currentUser())) {
             $r['success'] = false;
             $r['message'] = __('You do not have that many points to donate!', 'cp');
         } else if (strlen($message) > 160) {
@@ -109,10 +110,12 @@ if (cp_module_activated('donate')) {
             $message = mb_convert_encoding($message, 'HTML-ENTITIES', 'UTF-8');
             $r['success'] = true;
             $r['message'] = __('Your donation is successful!', 'cp');
-            cp_points('donate_from', $user->ID, $points, serialize(array("from" => cp_currentUser(), "message" => $message)));
-            cp_points('donate_to', cp_currentUser(), -$points, serialize(array("to" => $user->ID, "message" => $message)));
-            $r['pointsd'] = cp_displayPoints(0, 1, 1);
-            $r['points'] = cp_displayPoints(0, 1, 0);
+            $wpgamify_points_core->wpg_add_points('donate_from', $user->ID, $points, serialize(array("from" => $wpgamify_points_core->wpg_currentUser(), 
+                "message" => $message)));
+            $wpgamify_points_core->wpg_add_points('donate_to', $wpgamify_points_core->wpg_currentUser(), -$points, 
+                    serialize(array("to" => $user->ID, "message" => $message)));
+            $r['pointsd'] = $wpgamify_points_core->wpg_displayPoints(0, 1, 1);
+            $r['points'] = $wpgamify_points_core->wpg_displayPoints(0, 1, 0);
         }
 
         echo json_encode($r);

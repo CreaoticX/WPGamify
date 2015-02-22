@@ -107,7 +107,8 @@ if (cp_module_activated('ranks')) {
     }
 
     function cp_module_ranks_getRank($uid) {
-        return cp_module_ranks_pointsToRank(cp_getPoints($uid));
+        global $wpgamify_points_core;
+        return cp_module_ranks_pointsToRank($wpgamify_points_core->wpg_getPoints($uid));
     }
 
     function cp_module_ranks_pointsToRank($points) {
@@ -123,8 +124,9 @@ if (cp_module_activated('ranks')) {
 
     function cp_module_ranks_widget() {
         if (is_user_logged_in()) {
+        global $wpgamify_points_core;
             ?>
-            <li><?php _e('Rank', 'cp'); ?>: <?php echo cp_module_ranks_getRank(cp_currentUser()); ?></li>
+            <li><?php _e('Rank', 'cp'); ?>: <?php echo cp_module_ranks_getRank($wpgamify_points_core->wpg_currentUser()); ?></li>
             <?php
         }
     }

@@ -30,7 +30,9 @@ function cp_newComment($cid, $status) {
     $cdata = get_comment($cid);
     if ($status == 1) {
         do_action('cp_comment_add', $cid);
-        cp_points('comment', cp_currentUser(), apply_filters('cp_comment_points', get_option('cp_comment_points')), $cid);
+        global $wpgamify_points_core;
+        $wpgamify_points_core->wpg_add_points('comment', $wpgamify_points_core->wpg_currentUser(), 
+                apply_filters('cp_comment_points', get_option('cp_comment_points')), $cid);
     }
 }
 
@@ -41,7 +43,8 @@ add_action('comment_spam_to_approved', 'cp_commentApprove', 10, 1);
 
 function cp_commentApprove($cdata) {
     do_action('cp_comment_add', $cdata->comment_ID);
-    cp_points('comment', $cdata->user_id, apply_filters('cp_comment_points', get_option('cp_comment_points')), $cdata->comment_ID);
+    global $wpgamify_points_core;
+    $wpgamify_points_core->wpg_add_points('comment', $cdata->user_id, apply_filters('cp_comment_points', get_option('cp_comment_points')), $cdata->comment_ID);
 }
 
 /** Comment unapproved hook */
@@ -56,7 +59,8 @@ function cp_commentUnapprove($cdata) {
         return;
     }
     do_action('cp_comment_remove', $cdata->comment_ID);
-    cp_points('comment_remove', $cdata->user_id, apply_filters('cp_del_comment_points', -get_option('cp_del_comment_points')), $cdata->comment_ID);
+    global $wpgamify_points_core;
+    $wpgamify_points_core->wpg_add_points('comment_remove', $cdata->user_id, apply_filters('cp_del_comment_points', -get_option('cp_del_comment_points')), $cdata->comment_ID);
 }
 
 /** Comments logs hook */
@@ -98,7 +102,8 @@ function cp_newPost($pid) {
     global $wpdb;
     $count = (int) $wpdb->get_var("select count(id) from `" . CP_DB . "` where `type`='post' and `data`=" . $pid);
     if ($count == 0) {
-        cp_points('post', $uid, apply_filters('cp_post_points', get_option('cp_post_points')), $pid);
+        global $wpgamify_points_core;
+        $wpgamify_points_core->wpg_add_points('post', $uid, apply_filters('cp_post_points', get_option('cp_post_points')), $pid);
     }
 }
 
@@ -117,7 +122,8 @@ function cp_admin_logs_desc_post($type, $uid, $points, $data) {
 add_action('user_register', 'cp_newUser');
 
 function cp_newUser($uid) {
-    cp_points('register', $uid, apply_filters('cp_reg_points', get_option('cp_reg_points')), $uid);
+    global $wpgamify_points_core;
+    $wpgamify_points_core->wpg_add_points('register', $uid, apply_filters('cp_reg_points', get_option('cp_reg_points')), $uid);
 }
 
 /** User registration logs hook */
@@ -236,7 +242,8 @@ function cp_shortcode_user($atts) {
         }
         return cp_displayPoints($uid, 1, $atts['format']);
     } else {
-        $uid = cp_currentUser();
+        global $wpgamify_points_core;
+        $uid = $wpgamify_points_core->wpg_currentUser();
         if ($uid == '') {
             return $atts['not_logged_in'];
         }
@@ -294,7 +301,8 @@ function cp_manage_form_submit() {
         if ($points < 0) {
             $points = 0;
         }
-        cp_points_set('admin', $uid, $points, cp_currentUser());
+        global $wpgamify_points_core;
+        $wpgamify_points_core->wpg_add_points_set('admin', $uid, $points, $wpgamify_points_core->wpg_currentUser());
     } else {
         $response = json_encode(array('error' => __('Invalid request!', 'cp')));
         echo $response;
@@ -370,12 +378,13 @@ function cp_add_points_user_query() {
     }elseif ($user['ID'] == null){
         $response = json_encode($query);
     }else{
+        global $wpgamify_points_core;
         $response = json_encode(array(
             'id' => $user['ID'],
             'user_login' => $user['user_login'],
             'display_name' => $user['display_name'],
             'email' => $user['user_email'],
-            'points' => cp_getPoints($user['ID']),
+            'points' => $wpgamify_points_core->wpg_getPoints($user['ID']),
             'hash' => md5(trim(strtolower($user['user_email'])))
         ));
     }
@@ -399,10 +408,11 @@ function cp_add_points_user_update() {
         exit;
     }
 
-    cp_points('addpoints', $id, $points, htmlentities($description));
+    global $wpgamify_points_core;
+    $wpgamify_points_core->wpg_add_points('addpoints', $id, $points, htmlentities($description));
     $response = json_encode(array(
         'status' => 'ok',
-        'newpoints' => cp_getPoints($id)
+        'newpoints' => $wpgamify_points_core->wpg_getPoints($id)
     ));
     echo $response;
     exit;

@@ -17,7 +17,7 @@ if (cp_module_activated('resetdata')) {
         if ($cp_module_resetdata_form_submit == 'Y') {
             global $wpdb;
             $wpdb->query('TRUNCATE TABLE `' . CP_DB . '`');
-            $wpdb->query('UPDATE  `' . $wpdb->base_prefix . 'usermeta` SET  `meta_value` = 0 WHERE `meta_key` = \'cpoints\'');
+            $wpdb->query('UPDATE  `' . $wpdb->base_prefix . 'usermeta` SET  `meta_value` = 0 WHERE `meta_key` = \'wpg_points\'');
             echo '<div class="updated"><p><strong>' . __('Database reseted!', 'cp') . '</strong></p></div>';
         }
         ?>

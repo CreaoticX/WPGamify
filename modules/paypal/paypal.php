@@ -218,6 +218,7 @@ if (cp_module_activated('paypal')) {
             header("Cache-Control: no-cache, must-revalidate");
             header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
 
+            global $wpgamify_points_core;
             if (get_option('cp_module_paypal_sandbox')) {
                 $loc = 'https://www.sandbox.paypal.com/cgi-bin/webscr';
             } else {
@@ -244,12 +245,12 @@ if (cp_module_activated('paypal')) {
                     <form action="<?php echo $loc; ?>" method="post" name="paypal_form">
                         <input type="hidden" name="cmd" value="_xclick">
                         <input type="hidden" name="business" value="<?php echo get_option('cp_module_paypal_account'); ?>">
-                        <input type="hidden" name="item_name" value="<?php echo str_replace('%points%', cp_formatPoints($points), str_replace('%npoints%', $points, get_option('cp_module_paypal_item'))); ?>">
+                        <input type="hidden" name="item_name" value="<?php echo str_replace('%points%', $wpgamify_points_core->wpg_formatPoints($points), str_replace('%npoints%', $points, get_option('cp_module_paypal_item'))); ?>">
                         <input type="hidden" name="on1" value="User">
-                        <input type="hidden" name="os1" value="<?php $user = get_userdata(cp_currentUser());
+                        <input type="hidden" name="os1" value="<?php $user = get_userdata($wpgamify_points_core->wpg_currentUser());
             echo $user->user_login;
             ?>">
-                        <input type="hidden" name="custom" value="<?php echo $points . '|' . cp_currentUser(); ?>">
+                        <input type="hidden" name="custom" value="<?php echo $points . '|' . $wpgamify_points_core->wpg_currentUser(); ?>">
                         <input type="hidden" name="no_shipping" value="1">
                         <input type="hidden" name="return" value="<?php echo get_option('cp_module_paypal_thankyou'); ?>">
                         <input type="hidden" name="cbt" value="<?php
@@ -385,7 +386,8 @@ if (cp_module_activated('paypal')) {
                     die();
                 }
                 // process payment
-                cp_points('paypal', $uid, (int) $points, serialize(array('txn_id' => $txn_id, 'payer_email' => $payer_email, 'amt' => $payment_amount)));
+                global $wpgamify_points_core;
+                $wpgamify_points_core->wpg_add_points('paypal', $uid, (int) $points, serialize(array('txn_id' => $txn_id, 'payer_email' => $payer_email, 'amt' => $payment_amount)));
             } else if (strcmp($res, "INVALID") == 0) {
                 // invalid IPN
                 die();

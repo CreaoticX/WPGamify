@@ -253,11 +253,11 @@ class WPGamify_Mission_Schema {
         if ($new_value && empty($old_value))
             add_post_meta($post_id, $meta_key, $new_value, true);
         elseif (current_user_can('manage_options')) {
-            if ($new_value && $new_value != $old_value){
-                delete_post_meta($post_id, $meta_key);
-                update_post_meta($post_id, $meta_key, $new_value);
-            }elseif (empty($new_value)){
-                delete_post_meta($post_id, $meta_key);
+            if (empty($new_value)){
+                delete_post_meta($this->get_key_value(), $meta_key, $old_value);
+            }elseif ($new_value && $new_value != $old_value){
+                delete_post_meta($this->get_key_value(), $meta_key, $old_value);
+                update_post_meta($this->get_key_value(), $meta_key, $new_value);
             }
         }
     }
