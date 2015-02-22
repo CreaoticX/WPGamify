@@ -31,7 +31,8 @@ function cp_newComment($cid, $status) {
     if ($status == 1) {
         do_action('cp_comment_add', $cid);
         global $wpgamify_points_core;
-        $wpgamify_points_core->wpg_points('comment', cp_currentUser(), apply_filters('cp_comment_points', get_option('cp_comment_points')), $cid);
+        $wpgamify_points_core->wpg_points('comment', $wpgamify_points_core->wpg_currentUser(), 
+                apply_filters('cp_comment_points', get_option('cp_comment_points')), $cid);
     }
 }
 
@@ -241,7 +242,8 @@ function cp_shortcode_user($atts) {
         }
         return cp_displayPoints($uid, 1, $atts['format']);
     } else {
-        $uid = cp_currentUser();
+        global $wpgamify_points_core;
+        $uid = $wpgamify_points_core->wpg_currentUser();
         if ($uid == '') {
             return $atts['not_logged_in'];
         }
@@ -300,7 +302,7 @@ function cp_manage_form_submit() {
             $points = 0;
         }
         global $wpgamify_points_core;
-        $wpgamify_points_core->wpg_points_set('admin', $uid, $points, cp_currentUser());
+        $wpgamify_points_core->wpg_points_set('admin', $uid, $points, $wpgamify_points_core->wpg_currentUser());
     } else {
         $response = json_encode(array('error' => __('Invalid request!', 'cp')));
         echo $response;

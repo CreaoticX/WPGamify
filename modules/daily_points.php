@@ -12,16 +12,17 @@ add_action('cp_module_dailypoints_activate', 'cp_module_dailypoints_install');
 if (cp_module_activated('dailypoints')) {
 
     function cp_module_dailypoints_checkTimer() {
-        if (!is_user_logged_in())
+        if (!is_user_logged_in()){
             return;
-        $uid = cp_currentUser();
+        }
+        global $wpgamify_points_core;
+        $uid = $wpgamify_points_core->wpg_currentUser();
         $time = get_option('cp_module_dailypoints_time');
         $difference = time() - $time;
         global $wpdb;
         $count = (int) $wpdb->get_var("SELECT COUNT(*) FROM " . CP_DB . " WHERE `uid`=$uid AND `timestamp`>$difference AND `type`='dailypoints'");
         if ($count != 0)
             return;
-        global $wpgamify_points_core;
         $wpgamify_points_core->wpg_points('dailypoints', $uid, get_option('cp_module_dailypoints_points'), '');
     }
 

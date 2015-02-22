@@ -123,8 +123,9 @@ if (cp_module_activated('ranks')) {
 
     function cp_module_ranks_widget() {
         if (is_user_logged_in()) {
+        global $wpgamify_points_core;
             ?>
-            <li><?php _e('Rank', 'cp'); ?>: <?php echo cp_module_ranks_getRank(cp_currentUser()); ?></li>
+            <li><?php _e('Rank', 'cp'); ?>: <?php echo cp_module_ranks_getRank($wpgamify_points_core->wpg_currentUser()); ?></li>
             <?php
         }
     }

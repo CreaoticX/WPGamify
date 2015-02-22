@@ -52,11 +52,11 @@ if (cp_module_activated('youtube')) {
         $action = filter_input(INPUT_POST, 'action');
         if ($action == 'cp_youtube' && $post_uuid == $atts['id']) {
             global $wpdb;
+            global $wpgamify_points_core;
             $data = $atts['id'];
-            $uid = cp_currentUser();
+            $uid = $wpgamify_points_core->wpg_currentUser();
             if ((int) $wpdb->get_var("SELECT COUNT(*) FROM " . CP_DB . " WHERE `uid`=$uid AND `data`='$data' AND `type`='youtube'") == 0) {
-                global $wpgamify_points_core;
-                $wpgamify_points_core->wpg_points('youtube', cp_currentUser(), $points, $atts['id']);
+                $wpgamify_points_core->wpg_points('youtube', $wpgamify_points_core->wpg_currentUser(), $points, $atts['id']);
             }
             exit();
         }

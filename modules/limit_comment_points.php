@@ -36,7 +36,8 @@ if (cp_module_activated('lcpoints')) {
 
     function cp_module_lcpoints_newComment($cid) {
         if (is_user_logged_in()) {
-            $uid = cp_currentUser();
+            global $wpgamify_points_core;
+            $uid = $wpgamify_points_core->wpg_currentUser();
             $timelimit = time() - 86400; // one day
             global $wpdb;
             $comments = (int) $wpdb->get_var('SELECT comment_add - comment_remove as comments from (SELECT 1 as id, count(*) as comment_add FROM `' . CP_DB . '` WHERE `type`=\'comment\' AND `uid`=' . $uid . ' AND `timestamp`>' . $timelimit . ') as t1 LEFT JOIN (SELECT 1 as id, count(*) as comment_remove FROM `' . CP_DB . '` WHERE `type`=\'comment_remove\' AND `uid`=' . $uid . ' AND `timestamp`>' . $timelimit . ') as t2 ON t1.id = t2.id');

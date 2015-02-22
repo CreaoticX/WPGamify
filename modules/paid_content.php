@@ -181,7 +181,8 @@ if (cp_module_activated('pcontent')) {
         if (current_user_can('read_private_pages')) {
             return;
         }
-        $uid = cp_currentUser();
+        global $wpgamify_points_core;
+        $uid = $wpgamify_points_core->wpg_currentUser();
         $pid = $p->ID;
         global $wpdb;
         if ((int) $wpdb->get_var("SELECT COUNT(*) FROM " . CP_DB . " WHERE `uid`=$uid AND `data`=$pid AND `type`='pcontent'") != 0) {
@@ -219,8 +220,9 @@ if (cp_module_activated('pcontent')) {
         $pcontent_enabled = (bool) get_post_meta($cp_module_pcontent_pay, 'cp_pcontent_points_enable', 1);
         if (!$pcontent_enabled)
             return;
-        $uid = cp_currentUser();
+        global $wpgamify_points_core;
         global $wpdb;
+        $uid = $wpgamify_points_core->wpg_currentUser();
         $pid = filter_input(INPUT_POST, 'cp_module_pcontent_pay');
         if ((int) $wpdb->get_var("SELECT COUNT(*) FROM " . CP_DB . " WHERE `uid`=$uid AND `data`=$pid AND `type`='pcontent'") != 0) {
             return;
@@ -229,15 +231,14 @@ if (cp_module_activated('pcontent')) {
             add_filter('cp_module_pcontent_post_content_' . $pid, create_function('$data', 'return "<p style=\"color:red;\">' . get_option('cp_module_pcontent_text_logout') . '</p>";'));
             return;
         }
-        if (cp_getPoints(cp_currentUser()) < get_post_meta($cp_module_pcontent_pay, 'cp_pcontent_points', 1)) {
+        if ($wpgamify_points_core->wpg_getPoints($wpgamify_points_core->wpg_currentUser()) < get_post_meta($cp_module_pcontent_pay, 'cp_pcontent_points', 1)) {
             add_filter('cp_module_pcontent_post_content_' . $cp_module_pcontent_pay, create_function('$data', 'return "<p style=\"color:red;\">' . get_option('cp_module_pcontent_text_insufficient') . '</p>";'));
             return;
         }
-        global $wpgamify_points_core;
-        $wpgamify_points_core->wpg_points('pcontent', cp_currentUser(), -get_post_meta($cp_module_pcontent_pay, 'cp_pcontent_points', 1), $cp_module_pcontent_pay);
+        $wpgamify_points_core->wpg_points('pcontent', $wpgamify_points_core->wpg_currentUser(), -get_post_meta($cp_module_pcontent_pay, 'cp_pcontent_points', 1), $cp_module_pcontent_pay);
         if (get_option('cp_module_pcontent_payauthor')) {
             $post = get_post($cp_module_pcontent_pay);
-            $wpgamify_points_core->wpg_points('pcontent_author', $post->post_author, get_post_meta($cp_module_pcontent_pay, 'cp_pcontent_points', 1), serialize(array($cp_module_pcontent_pay, cp_currentUser())));
+            $wpgamify_points_core->wpg_points('pcontent_author', $post->post_author, get_post_meta($cp_module_pcontent_pay, 'cp_pcontent_points', 1), serialize(array($cp_module_pcontent_pay, $wpgamify_points_core->wpg_currentUser())));
         }
     }
 
