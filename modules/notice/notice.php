@@ -104,10 +104,11 @@ if (cp_module_activated('notify')) {
     add_action('init', 'cp_module_notify_hook', 0, 2);
 
     function cp_module_notify_msg_filter($d) {
+        global $wpgamify_points_core;
         list($m, $type, $uid, $points, $data) = $d;
         $user = get_userdata($uid);
         $m = str_replace('%npoints%', abs($points), $m);
-        $m = str_replace('%points%', cp_formatPoints(abs($points)), $m);
+        $m = str_replace('%points%', $wpgamify_points_core->wpg_formatPoints(abs($points)), $m);
         $m = str_replace('%type%', $type, $m);
         $m = str_replace('%username%', $user->user_login, $m);
         $m = str_replace('%user%', $user->display_name, $m);

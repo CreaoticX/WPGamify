@@ -195,6 +195,7 @@ if (cp_module_activated('pcontent')) {
     function cp_module_pcontent_post_content($content) {
         global $post;
         global $cp_module_pcontent_hide;
+        global $wpgamify_points_core;
         if (!in_array($post->ID, (array) $cp_module_pcontent_hide)) {
             return $content;
         }
@@ -207,7 +208,7 @@ if (cp_module_activated('pcontent')) {
         if (!is_user_logged_in()) {
             $c = get_option('cp_module_pcontent_text_logout');
         }
-        $c = str_replace('%points%', cp_formatPoints(get_post_meta($post->ID, 'cp_pcontent_points', 1)), $c);
+        $c = str_replace('%points%', $wpgamify_points_core->wpg_formatPoints(get_post_meta($post->ID, 'cp_pcontent_points', 1)), $c);
         return $c;
     }
 
