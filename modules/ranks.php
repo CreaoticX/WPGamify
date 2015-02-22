@@ -107,7 +107,8 @@ if (cp_module_activated('ranks')) {
     }
 
     function cp_module_ranks_getRank($uid) {
-        return cp_module_ranks_pointsToRank(cp_getPoints($uid));
+        global $wpgamify_points_core;
+        return cp_module_ranks_pointsToRank($wpgamify_points_core->wpg_getPoints($uid));
     }
 
     function cp_module_ranks_pointsToRank($points) {

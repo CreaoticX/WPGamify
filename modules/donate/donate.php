@@ -100,7 +100,7 @@ if (cp_module_activated('donate')) {
         } else if ((int) $points != (float) $points) {
             $r['success'] = false;
             $r['message'] = __('You have entered an invalid number of points!', 'cp');
-        } else if ((int) $points > (int) cp_getPoints($wpgamify_points_core->wpg_currentUser())) {
+        } else if ((int) $points > (int) $wpgamify_points_core->wpg_getPoints($wpgamify_points_core->wpg_currentUser())) {
             $r['success'] = false;
             $r['message'] = __('You do not have that many points to donate!', 'cp');
         } else if (strlen($message) > 160) {
@@ -114,8 +114,8 @@ if (cp_module_activated('donate')) {
                 "message" => $message)));
             $wpgamify_points_core->wpg_points('donate_to', $wpgamify_points_core->wpg_currentUser(), -$points, 
                     serialize(array("to" => $user->ID, "message" => $message)));
-            $r['pointsd'] = cp_displayPoints(0, 1, 1);
-            $r['points'] = cp_displayPoints(0, 1, 0);
+            $r['pointsd'] = $wpgamify_points_core->wpg_displayPoints(0, 1, 1);
+            $r['points'] = $wpgamify_points_core->wpg_displayPoints(0, 1, 0);
         }
 
         echo json_encode($r);

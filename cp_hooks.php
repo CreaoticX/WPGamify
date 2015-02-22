@@ -378,12 +378,13 @@ function cp_add_points_user_query() {
     }elseif ($user['ID'] == null){
         $response = json_encode($query);
     }else{
+        global $wpgamify_points_core;
         $response = json_encode(array(
             'id' => $user['ID'],
             'user_login' => $user['user_login'],
             'display_name' => $user['display_name'],
             'email' => $user['user_email'],
-            'points' => cp_getPoints($user['ID']),
+            'points' => $wpgamify_points_core->wpg_getPoints($user['ID']),
             'hash' => md5(trim(strtolower($user['user_email'])))
         ));
     }
@@ -411,7 +412,7 @@ function cp_add_points_user_update() {
     $wpgamify_points_core->wpg_points('addpoints', $id, $points, htmlentities($description));
     $response = json_encode(array(
         'status' => 'ok',
-        'newpoints' => cp_getPoints($id)
+        'newpoints' => $wpgamify_points_core->wpg_getPoints($id)
     ));
     echo $response;
     exit;
