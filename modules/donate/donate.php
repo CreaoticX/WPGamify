@@ -143,7 +143,7 @@ if ($wpgamify_points_core->wpg_module_activated('donate')) {
             'donateComment' => __('Leave feedback (to be displayed on recipient\'s profile)', 'cp'),
             'donateCommentPlaceholder' => __('Enter a message...', 'cp'),
             'notLoggedInText' => __('You must be logged in to make a transfer!', 'cp'),
-            'somethingWentWrongText' => _('Oops, something went wrong! Please try again later.', 'cp')
+            'somethingWentWrongText' => __('Oops, something went wrong! Please try again later.', 'cp')
         ));
     }
 

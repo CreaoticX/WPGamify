@@ -25,22 +25,26 @@ if ($wpgamify_points_core->wpg_module_activated('ranks')) {
             $cp_module_ranks_data_rank = trim(filter_input(INPUT_POST, 'cp_module_ranks_data_rank'));
             $cp_module_ranks_data_points = (int) trim(filter_input(INPUT_POST, 'cp_module_ranks_data_points'));
             $ranks = get_option('cp_module_ranks_data');
-            if ($cp_module_ranks_data_rank == '' || $cp_module_ranks_data_points) {
+            if ($cp_module_ranks_data_rank == '' || $cp_module_ranks_data_points == '') {
                 echo '<div class="error"><p><strong>' . __('Rank name or points cannot be empty!', 'cp') . '</strong></p></div>';
             } else if (!is_numeric($cp_module_ranks_data_points) || $cp_module_ranks_data_points < 0 || $cp_module_ranks_data_points != (float) trim(filter_input(INPUT_POST, 'cp_module_ranks_data_points'))) {
                 echo '<div class="error"><p><strong>' . __('Please enter only positive integers for the points!', 'cp') . '</strong></p></div>';
             } else {
+                if($cp_module_ranks_data_points == 0){
+                    $ranks[$cp_module_ranks_data_points] = $cp_module_ranks_data_rank;
+                }else{
+                    $ranks[$cp_module_ranks_data_points] = $cp_module_ranks_data_rank;
+                }
                 if ($ranks[$cp_module_ranks_data_points] != '') {
                     echo '<div class="updated"><p><strong>' . __('Rank Updated', 'cp') . '</strong></p></div>';
                 } else {
                     echo '<div class="updated"><p><strong>' . __('Rank Added', 'cp') . '</strong></p></div>';
                 }
-                $ranks[$cp_module_ranks_data_points] = $cp_module_ranks_data_rank;
                 update_option('cp_module_ranks_data', $ranks);
             }
         }
         
-        $cp_rank_remove = (int)trim(filter_input(INPUT_POST, 'cp_rank_remove'));
+        $cp_rank_remove = trim(filter_input(INPUT_POST, 'cp_rank_remove'));
         if ($cp_rank_remove != '') {
             if ( $cp_rank_remove == 0) {
                 echo '<div class="error"><p><strong>' . __('A rank name is needed for users with 0 points!<br /><br />To change the name of this rank, add another rank to replace this.', 'cp') . '</strong></p></div>';
@@ -54,7 +58,7 @@ if ($wpgamify_points_core->wpg_module_activated('ranks')) {
         ?>
 
         <div class="wrap">
-            <h2>CubePoints - <?php _e('Ranks', 'cp'); ?></h2>
+            <h2>WPGamify - <?php _e('Ranks', 'cp'); ?></h2>
         <?php _e('Setup ranks for your users.', 'cp'); ?> <?php _e('To rename ranks, overwrite it with a new rank.', 'cp'); ?><br /><br />
 
             <table id="cp_modules_table" class="widefat datatables">
@@ -91,11 +95,11 @@ if ($wpgamify_points_core->wpg_module_activated('ranks')) {
                 <table class="form-table">
                     <tr valign="top">
                         <th scope="row"><label for="cp_module_ranks_data_rank"><?php _e('Rank Name', 'cp'); ?>:</label></th>
-                        <td valign="middle"><input type="text" id="cp_module_ranks_data_rank" name="cp_module_ranks_data_rank" value="<?php echo get_option('cp_module_ranks_data_rank'); ?>" size="40" /></td>
+                        <td valign="middle"><input type="text" id="cp_module_ranks_data_rank" name="cp_module_ranks_data_rank" value="" size="40" /></td>
                     </tr>
                     <tr valign="top">
                         <th scope="row"><label for="cp_module_ranks_data_points"><?php _e('Points to reach this rank', 'cp'); ?>:</label></th>
-                        <td valign="middle"><input type="text" id="cp_module_ranks_data_points" name="cp_module_ranks_data_points" value="<?php echo get_option('cp_module_ranks_data_points'); ?>" size="40" /></td>
+                        <td valign="middle"><input type="text" id="cp_module_ranks_data_points" name="cp_module_ranks_data_points" value="" size="40" /></td>
                     </tr>
                 </table>
 
@@ -113,13 +117,13 @@ if ($wpgamify_points_core->wpg_module_activated('ranks')) {
     }
 
     function cp_module_ranks_pointsToRank($points) {
-        $ranks = get_option('cp_module_ranks_data');
-        ksort($ranks);
-        $ranks = array_reverse($ranks, 1);
-        foreach ($ranks as $p => $r) {
-            if ($points >= $p) {
-                return $r;
-            }
+        $ranks_o = get_option('cp_module_ranks_data');
+        ksort($ranks_o);
+        $ranks = array_reverse($ranks_o, 1);
+        foreach($ranks as $p=>$r){
+                if($points>=$p){
+                        return $r;
+                }
         }
     }
 

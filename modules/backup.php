@@ -19,9 +19,8 @@ if ($wpgamify_points_core->wpg_module_activated('backup')) {
         $data = $wpdb->get_results('SELECT ' . $wpdb->base_prefix . 'users.id, ' . $wpdb->base_prefix . 'users.user_login, ' . $wpdb->base_prefix . 'users.user_email, ' . $wpdb->base_prefix . 'usermeta.meta_value 
 			FROM `' . $wpdb->base_prefix . 'users` 
 			LEFT JOIN `' . $wpdb->base_prefix . 'usermeta` ON ' . $wpdb->base_prefix . 'users.id = ' . $wpdb->base_prefix . 'usermeta.user_id 
-			AND ' . $wpdb->base_prefix . 'usermeta.meta_key=\'' . 'wpg_points' . '\'' . $extraquery . ' 
-			ORDER BY ' . $wpdb->base_prefix . 'users.id ASC'
-                . $limit . ';'
+			AND ' . $wpdb->base_prefix . 'usermeta.meta_key=\'' . 'wpg_points' . '\'' . 
+			' ORDER BY ' . $wpdb->base_prefix . 'users.id ASC'
                 , ARRAY_N);
 
         foreach ($data as $x => $y) {
@@ -62,99 +61,102 @@ if ($wpgamify_points_core->wpg_module_activated('backup')) {
 
         // handles form submissions
         $backup_down_form_submit = filter_input(INPUT_POST, 'cp_module_backup_down_form_submit');
+        $backup_up_form_submit = filter_input(INPUT_POST, 'cp_module_backup_up_form_submit');
         $cp_module_backup_up_form_match =  filter_input(INPUT_POST, 'cp_module_backup_up_form_match');
+        $cp_module_backup_down_form_format = filter_input(INPUT_POST, 'cp_module_backup_down_form_format');
         if ($backup_down_form_submit == 'Y') {
             update_option('cp_module_backup_lastbackup', time());
             echo '<div class="updated"><p><strong>' . __('Your backup has been generated', 'cp') . '...</strong></p></div>';
             echo '<script type="text/javascript">jQuery(document).ready(function() { location.href="' . get_bloginfo('url') . 
-                    '/wp-admin/admin-ajax.php?action=cp_module_backup_down&fmt=' . $backup_down_form_submit . 
+                    '/wp-admin/admin-ajax.php?action=cp_module_backup_down&fmt=' . $cp_module_backup_down_form_format . 
                     '"; });</script>';
-        }
-        if ($backup_down_form_submit == 'Y') {
-            switch ($_FILES['cp_module_backup_up_form_upload']['error']) {
-                case 0:
-                    $handle = fopen($_FILES['cp_module_backup_up_form_upload']['tmp_name'], "r");
-                    $data = fread($handle, filesize($_FILES['cp_module_backup_up_form_upload']['tmp_name']));
-                    fclose($handle);
-                    // try json
-                    $json = json_decode($data);
-                    if ($json != null) {
-                        $data = $json;
-                    } else {
-                        // try csv
-                        $lines = explode("\n", str_replace("\r", "", $data));
-                        foreach ($lines as $n => $line) {
-                            $csv[] = explode(",", $line);
-                        }
-                        $data = $csv;
-                    }
-                    $datap = array();
-                    foreach ($data as $d) {
-                        if (is_numeric($d[0]) && validate_username($d[1]) && is_email($d[2]) && is_numeric($d[3]) && $d[3] >= 0) {
-                            $datap[] = array($d[0], $d[1], $d[2], $d[3]);
-                        }
-                    }
-                    if (count($datap) > 0) {
-                        // valid data
-                        $users_matched = 0;
-                        $users_updated = 0;
-                        foreach ($datap as $d) {
-                            switch ($cp_module_backup_up_form_match) {
-                                default:
-                                case 'id':
-                                    $u = get_user_by('id', $d[0]);
-                                    break;
-
-                                case 'login':
-                                    $u = get_user_by('login', $d[1]);
-                                    break;
-
-                                case 'email':
-                                    $u = get_user_by('email', $d[2]);
-                                    break;
+        }else if ($backup_up_form_submit == 'Y') {
+            if(isset($_FILES['cp_module_backup_up_form_upload'])){
+                switch ($_FILES['cp_module_backup_up_form_upload']['error']) {
+                    case 0:
+                        $handle = fopen($_FILES['cp_module_backup_up_form_upload']['tmp_name'], "r");
+                        $data = fread($handle, filesize($_FILES['cp_module_backup_up_form_upload']['tmp_name']));
+                        fclose($handle);
+                        // try json
+                        $json = json_decode($data);
+                        if ($json != null) {
+                            $data = $json;
+                        } else {
+                            // try csv
+                            $lines = explode("\n", str_replace("\r", "", $data));
+                            foreach ($lines as $n => $line) {
+                                $csv[] = explode(",", $line);
                             }
-                            if ($u) {
-                                $uid = $u->ID;
-                                $curr_points = $u->wpg_points;
-                                if ((int) $curr_points != $d[3]) {
-                                    global $wpgamify_points_core;
-                                    $wpgamify_points_core->wpg_updatePoints($uid, $d[3]);
-                                    $users_updated++;
+                            $data = $csv;
+                        }
+                        $datap = array();
+                        foreach ($data as $d) {
+                            if (is_numeric($d[0]) && validate_username($d[1]) && is_email($d[2]) && is_numeric($d[3]) && $d[3] >= 0) {
+                                $datap[] = array($d[0], $d[1], $d[2], $d[3]);
+                            }
+                        }
+                        if (count($datap) > 0) {
+                            // valid data
+                            $users_matched = 0;
+                            $users_updated = 0;
+                            foreach ($datap as $d) {
+                                switch ($cp_module_backup_up_form_match) {
+                                    default:
+                                    case 'id':
+                                        $u = get_user_by('id', $d[0]);
+                                        break;
+
+                                    case 'login':
+                                        $u = get_user_by('login', $d[1]);
+                                        break;
+
+                                    case 'email':
+                                        $u = get_user_by('email', $d[2]);
+                                        break;
                                 }
-                                $users_matched++;
+                                if ($u) {
+                                    $uid = $u->ID;
+                                    $curr_points = $u->wpg_points;
+                                    if ((int) $curr_points != $d[3]) {
+                                        global $wpgamify_points_core;
+                                        $wpgamify_points_core->wpg_updatePoints($uid, $d[3]);
+                                        $users_updated++;
+                                    }
+                                    $users_matched++;
+                                }
                             }
+                            echo '<div class="updated"><p><strong>' . __('The backup file has been restored!', 'cp') . '</strong>';
+                            echo '<div style="font-size:11px;">';
+                            $users = count_users();
+                            echo '<strong>' . __('Backup file', 'cp') . ':</strong> ' . basename($_FILES['cp_module_backup_up_form_upload']['name']);
+                            echo '<br /><strong>' . __('Total users in blog', 'cp') . ':</strong> ' . $users['total_users'];
+                            echo '<br /><strong>' . __('Users in backup file', 'cp') . ':</strong> ' . count($datap);
+                            echo '<br /><strong>' . __('Users matched', 'cp') . ':</strong> ' . $users_matched;
+                            echo '<br /><strong>' . __('Users altered', 'cp') . ':</strong> ' . $users_updated;
+                            echo '</div>';
+                            echo '</p></div>';
+                            update_option('cp_module_backup_lastrestore', time());
+                        } else {
+                            echo '<div class="error"><p><strong>' . __('The file you have uploaded is not a valid backup file', 'cp') . '...</strong></p></div>';
                         }
-                        echo '<div class="updated"><p><strong>' . __('The backup file has been restored!', 'cp') . '</strong>';
-                        echo '<div style="font-size:11px;">';
-                        $users = count_users();
-                        echo '<strong>' . __('Backup file', 'cp') . ':</strong> ' . basename($_FILES['cp_module_backup_up_form_upload']['name']);
-                        echo '<br /><strong>' . __('Total users in blog', 'cp') . ':</strong> ' . $users['total_users'];
-                        echo '<br /><strong>' . __('Users in backup file', 'cp') . ':</strong> ' . count($datap);
-                        echo '<br /><strong>' . __('Users matched', 'cp') . ':</strong> ' . $users_matched;
-                        echo '<br /><strong>' . __('Users altered', 'cp') . ':</strong> ' . $users_updated;
-                        echo '</div>';
-                        echo '</p></div>';
-                        update_option('cp_module_backup_lastrestore', time());
-                    } else {
-                        echo '<div class="error"><p><strong>' . __('The file you have uploaded is not a valid backup file', 'cp') . '...</strong></p></div>';
-                    }
-                    break;
-                case 1:
-                case 2:
-                    echo '<div class="error"><p><strong>' . __('The file you uploaded exceeds the maximum file size allowed', 'cp') . '...</strong></p></div>';
-                    break;
-                case 4:
-                    echo '<div class="error"><p><strong>' . __('Please select a file to restore', 'cp') . '...</strong></p></div>';
-                    break;
-                default:
-                    echo '<div class="error"><p><strong>' . __('An error occured while uploading the backup file', 'cp') . '...</strong></p></div>';
-                    break;
+                        break;
+                    case 1:
+                    case 2:
+                        echo '<div class="error"><p><strong>' . __('The file you uploaded exceeds the maximum file size allowed', 'cp') . '...</strong></p></div>';
+                        break;
+                    case 4:
+                        echo '<div class="error"><p><strong>' . __('Please select a file to restore', 'cp') . '...</strong></p></div>';
+                        break;
+                    default:
+                        echo '<div class="error"><p><strong>' . __('An error occured while uploading the backup file', 'cp') . '...</strong></p></div>';
+                        break;
+                }
             }
         }
         ?>
 
         <div class="wrap">
-            <h2>CubePoints - <?php _e('Backup &amp; Restore', 'cp'); ?></h2>
+            <h2>WPGamify - <?php _e('Backup &amp; Restore', 'cp'); ?></h2>
 
 
             <h3><?php _e('Backup Points', 'cp'); ?></h3>		
@@ -176,7 +178,6 @@ if ($wpgamify_points_core->wpg_module_activated('backup')) {
                         <th scope="row"><label for="cp_module_backup_down_form_format"><?php _e('Format', 'cp'); ?>:</label></th>
                         <td valign="middle">
                             <select id="cp_module_backup_down_form_format" name="cp_module_backup_down_form_format" style="width:200px;">
-                                <?php $cp_module_backup_down_form_format = filter_input(INPUT_POST, 'cp_module_backup_down_form_format');?>
                                 <option value="json"<?php echo $cp_module_backup_down_form_format == 'json' ? ' selected' : ''; ?>>JSON</option>
                                 <option value="csv"<?php echo $cp_module_backup_down_form_format == 'csv' ? ' selected' : ''; ?>>CSV</option>
                             </select>
