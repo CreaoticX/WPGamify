@@ -72,7 +72,7 @@ class WPGamify_Default_Missions{
             global $wpgamify_points_core;
             global $wpgamify_mission_schema;
             global $wpgamify_badge_issued_schema;
-            $post_type = $wpgamify_mission_schema->get_post_type_name;
+            $post_type = $wpgamify_mission_schema->get_post_type_name();
             $points = $wpgamify_points_core->wpg_getPoints($uid);
             $myquery = new WP_Query( "post_type=$post_type&meta_key=wpgamify_ptb_points&meta_value>=$points&order=ASC" );
             while ( $myquery->have_posts() ){

@@ -13,6 +13,7 @@ class cp_pointsWidget extends WP_Widget {
  
 	// widget main
 	function widget($args, $instance) {
+            global $wpgamify_points_core;
 		extract($args, EXTR_SKIP);
 		if (!(!is_user_logged_in() && $instance['text_alt']=='')) {
 			echo $before_widget;
@@ -23,7 +24,7 @@ class cp_pointsWidget extends WP_Widget {
 				if($instance['text'] == '') {
 					$instance['text'] = 'Points: %points%';
 				}
-				$string = str_replace('%points%', '<span class="cp_points_display">'.cp_displayPoints(0,1,1).'</span>', $instance['text']);
+				$string = str_replace('%points%', '<span class="cp_points_display">'.$wpgamify_points_core->wpg_displayPoints(0,1,1).'</span>', $instance['text']);
 			} else {
 				$string = $instance['text_alt'];
 			}
@@ -99,6 +100,8 @@ class cp_topUsersWidget extends WP_Widget {
  
 	// widget main
 	function widget($args, $instance) {
+            global $wpgamify_points_core;
+
 		extract($args, EXTR_SKIP);
 		echo $before_widget;
 		$title = empty($instance['title']) ? '&nbsp;' : apply_filters('widget_title', $instance['title']);
@@ -108,7 +111,7 @@ class cp_topUsersWidget extends WP_Widget {
 		if($instance['num'] == '' || $instance['num'] == 0) { $instance['num'] = 1; }
 		if($instance['text'] == '') { $instance['text'] = '%user% (%points%)';}
 
-		$top = cp_getAllPoints($instance['num'],get_option('cp_topfilter'));
+		$top = $wpgamify_points_core->wpg_getAllPoints($instance['num'],get_option('cp_topfilter'));
 		do_action('cp_topUsersWidget_before');
 		echo apply_filters('cp_topUsersWidget_before','<ul>');
 		$line = apply_filters('cp_topUsersWidget_line','<li class="cp_topUsersWidget top_%place%" style="%style%">%string%</li>');

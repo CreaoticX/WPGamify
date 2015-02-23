@@ -1,14 +1,15 @@
 <?php
 /** YouTube Module */
-cp_module_register(__('YouTube', 'cp'), 'youtube', '1.0', 'CubePoints', 'http://cubepoints.com', 'http://cubepoints.com', __('Let users earn points for watching YouTube videos.', 'cp'), 1);
+global $wpgamify_points_core;
+//$wpgamify_points_core->wpg_module_register(__('YouTube', 'cp'), 'youtube', '1.0', 'CubePoints', 'http://cubepoints.com', 'http://cubepoints.com', __('Let users earn points for watching YouTube videos.', 'cp'), 1);
 
 function cp_module_youtube_points_install() {
     add_option('cp_module_youtube_points', 10);
 }
 
-add_action('cp_module_youtube_activate', 'cp_module_youtube_points_install');
+//add_action('cp_module_youtube_activate', 'cp_module_youtube_points_install');
 
-if (cp_module_activated('youtube')) {
+if ($wpgamify_points_core->wpg_module_activated('youtube')) {
 
     function cp_module_youtube_config() {
         ?>

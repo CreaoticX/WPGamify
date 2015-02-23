@@ -67,6 +67,8 @@ function cp_commentUnapprove($cdata) {
 add_action('cp_logs_description', 'cp_admin_logs_desc_comment', 10, 4);
 
 function cp_admin_logs_desc_comment($type, $uid, $points, $data) {
+    global $wpgamify_points_core;
+        
     if ($type != 'comment') {
         return;
     }
@@ -79,7 +81,7 @@ function cp_admin_logs_desc_comment($type, $uid, $points, $data) {
     $pdata = get_post($pid);
     $ptitle = $pdata->post_title;
     $url = get_permalink($pid) . '#comment-' . $data;
-    $detail = __('Comment', 'cp') . ': ' . cp_truncate(strip_tags($cdata->comment_content), 100, false);
+    $detail = __('Comment', 'cp') . ': ' . $wpgamify_points_core->wpg_truncate(strip_tags($cdata->comment_content), 100, false);
     echo '<span title="' . $detail . '">' . __('Comment on', 'cp') . ' &quot;<a href="' . $url . '">' . $ptitle . '</a>&quot;</span>';
 }
 
@@ -172,11 +174,13 @@ function cp_admin_logs_desc_custom($type, $uid, $points, $data) {
 add_shortcode('cubepoints_top', 'cp_shortcode_top');
 
 function cp_shortcode_top($atts) {
+    global $wpgamify_points_core;
+
     $num = (int) $atts['num'];
     if ($num < 1) {
         $num = 1;
     }
-    $top = cp_getAllPoints($num, get_option('cp_topfilter'));
+    $top = $wpgamify_points_core->wpg_getAllPoints($num, get_option('cp_topfilter'));
     if ($atts['class'] != '') {
         $class = ' class="' . $atts['class'] . '"';
     }
@@ -234,20 +238,22 @@ function cp_shortcode_top($atts) {
 add_shortcode('cubepoints', 'cp_shortcode_user');
 
 function cp_shortcode_user($atts) {
+    global $wpgamify_points_core;
     if ($atts['user'] != '') {
         $u = get_userdatabylogin($atts['user']);
         $uid = $u->ID;
         if ($uid == '') {
             return '';
         }
-        return cp_displayPoints($uid, 1, $atts['format']);
+        
+        return $wpgamify_points_core->wpg_displayPoints($uid, 1, $atts['format']);
     } else {
         global $wpgamify_points_core;
         $uid = $wpgamify_points_core->wpg_currentUser();
         if ($uid == '') {
             return $atts['not_logged_in'];
         }
-        return cp_displayPoints($uid, 1, (bool) $atts['format']);
+        return $wpgamify_points_core->wpg_displayPoints($uid, 1, (bool) $atts['format']);
     }
     return $c;
 }
@@ -310,8 +316,8 @@ function cp_manage_form_submit() {
     }
 
     $response = json_encode(array('error' => 'ok',
-        'points' => cp_displayPoints($uid, 1, 0),
-        'points_formatted' => cp_displayPoints($uid, 1, 1),
+        'points' => $wpgamify_points_core->wpg_displayPoints($uid, 1, 0),
+        'points_formatted' => $wpgamify_points_core->wpg_displayPoints($uid, 1, 1),
         'username' => $user->user_login,
         'user_id' => $user->ID
             ));

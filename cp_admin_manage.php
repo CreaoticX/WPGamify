@@ -12,6 +12,7 @@ function cp_admin_manage() {
         <div class="updated" id="cp_manage_updated" style="display: none;"></div>
         <?php
         global $wpdb;
+        global $wpgamify_points_core;
         $results = $wpdb->get_results("SELECT * FROM `" . $wpdb->users . "` ORDER BY user_login ASC");
         ?>
 
@@ -38,7 +39,7 @@ function cp_admin_manage() {
                         </strong><br /><i><?php echo $user->user_email; ?></i>
                     </td>
                     <td class="cp_manage_form_points">
-                        <span id="cp_manage_form_points_<?php echo $result->ID; ?>"><?php cp_displayPoints($result->ID); ?></span>
+                        <span id="cp_manage_form_points_<?php echo $result->ID; ?>"><?php $wpgamify_points_core->wpg_displayPoints($result->ID); ?></span>
                     </td>
                     <td class="cp_manage_form_update">
                         <a href="<?php echo admin_url() . 'admin.php?page=cp_admin_add_points#' . $user_id; ?>">

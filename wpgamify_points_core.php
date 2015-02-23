@@ -127,7 +127,7 @@ class WPGamify_Points_Core {
             return false;
         }
         global $wpdb;
-        $wpdb->query("INSERT INTO `" . CP_DB . "` (`id`, `uid`, `type`, 'custom', `data`, `points`, `timestamp`) 
+        $wpdb->query("INSERT INTO `" . CP_DB . "` (`id`, `uid`, `type`, `custom`, `data`, `points`, `timestamp`) 
                                       VALUES (NULL, '" . $uid . "', '" . $type . "', '" . $custom . "', '" . $data . "', '" . $points . "', " . time() . ");");
         do_action('wpg_points_log', $type, $uid, $points, $data, $custom);
         return true;

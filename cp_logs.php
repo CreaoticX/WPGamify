@@ -18,7 +18,7 @@ function cp_show_logs($type = 'all', $limit = 10, $datatables = true) {
     } else if (is_admin()) {
         $uid = (int) filter_input(INPUT_GET, "wpguser");
         $user = get_userdata($uid);
-        if ($user->ID != '') {
+        if ($user&&$user->ID != '') {
             $q = ' WHERE `uid` = ' . $user->ID . ' ';
         }
     }

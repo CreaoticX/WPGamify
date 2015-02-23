@@ -1,6 +1,7 @@
 <?php
 /** Limit Comment Points Module */
-cp_module_register(__('Limit Comment Points', 'cp'), 'lcpoints', '1.0', 'CubePoints', 'http://cubepoints.com', 'http://cubepoints.com', __('Limits the number of comments that would earn points for users across all posts.', 'cp'), 1);
+global $wpgamify_points_core;
+$wpgamify_points_core->wpg_module_register(__('Limit Comment Points', 'cp'), 'lcpoints', '1.0', 'CubePoints', 'http://cubepoints.com', 'http://cubepoints.com', __('Limits the number of comments that would earn points for users across all posts.', 'cp'), 1);
 
 function cp_module_lcpoints_install() {
     add_option('cp_module_lcpoints_limit', 5);
@@ -8,7 +9,7 @@ function cp_module_lcpoints_install() {
 
 add_action('cp_module_lcpoints_activate', 'cp_module_lcpoints_install');
 
-if (cp_module_activated('lcpoints')) {
+if ($wpgamify_points_core->wpg_module_activated('lcpoints')) {
 
     function cp_module_lcpoints_config() {
         ?>

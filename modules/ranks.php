@@ -1,6 +1,7 @@
 <?php
 /** Ranks Module */
-cp_module_register(__('Ranks', 'cp'), 'ranks', '1.0', 'CubePoints', 'http://cubepoints.com', 'http://cubepoints.com', __('Create and display user ranks based on the number of points they have.', 'cp'), 1);
+global $wpgamify_points_core;
+$wpgamify_points_core->wpg_module_register(__('Ranks', 'cp'), 'ranks', '1.0', 'CubePoints', 'http://cubepoints.com', 'http://cubepoints.com', __('Create and display user ranks based on the number of points they have.', 'cp'), 1);
 
 function cp_module_ranks_data_install() {
     add_option('cp_module_ranks_data', array(0 => __('Newbie', 'cp')));
@@ -8,7 +9,7 @@ function cp_module_ranks_data_install() {
 
 add_action('cp_module_ranks_activate', 'cp_module_ranks_data_install');
 
-if (cp_module_activated('ranks')) {
+if ($wpgamify_points_core->wpg_module_activated('ranks')) {
 
     function cp_module_ranks_data_add_admin_page() {
         add_submenu_page('cp_admin_manage', 'CubePoints - ' . __('Ranks', 'cp'), __('Ranks', 'cp'), 'manage_options', 'cp_modules_ranks_admin', 'cp_modules_ranks_admin');

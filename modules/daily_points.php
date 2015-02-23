@@ -1,6 +1,7 @@
 <?php
 /** Daily Points Module */
-cp_module_register(__('Daily Points', 'cp'), 'dailypoints', '1.0', 'CubePoints', 'http://cubepoints.com', 'http://cubepoints.com', __('Give your users points for visiting your site everyday or every fixed interval.', 'cp'), 1);
+global $wpgamify_points_core;
+$wpgamify_points_core->wpg_module_register(__('Daily Points', 'cp'), 'dailypoints', '1.0', 'CubePoints', 'http://cubepoints.com', 'http://cubepoints.com', __('Give your users points for visiting your site everyday or every fixed interval.', 'cp'), 1);
 
 function cp_module_dailypoints_install() {
     add_option('cp_module_dailypoints_points', 5);
@@ -9,7 +10,7 @@ function cp_module_dailypoints_install() {
 
 add_action('cp_module_dailypoints_activate', 'cp_module_dailypoints_install');
 
-if (cp_module_activated('dailypoints')) {
+if ($wpgamify_points_core->wpg_module_activated('dailypoints')) {
 
     function cp_module_dailypoints_checkTimer() {
         if (!is_user_logged_in()){

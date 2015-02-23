@@ -1,9 +1,10 @@
 <?php
 
 /** My Points Module */
-cp_module_register(__('My Points', 'cp'), 'mypoints', '1.0', 'CubePoints', 'http://cubepoints.com', 'http://cubepoints.com', __('Allow users to see a history of their point transactions.', 'cp'), 1);
+global $wpgamify_points_core;
+$wpgamify_points_core->wpg_module_register(__('My Points', 'cp'), 'mypoints', '1.0', 'CubePoints', 'http://cubepoints.com', 'http://cubepoints.com', __('Allow users to see a history of their point transactions.', 'cp'), 1);
 
-if (cp_module_activated('mypoints')) {
+if ($wpgamify_points_core->wpg_module_activated('mypoints')) {
 
     add_action('admin_print_scripts-cubepoints_page_cp_modules_mypoints_admin', 'cp_datatables_script');
     add_action('admin_print_styles-cubepoints_page_cp_modules_mypoints_admin', 'cp_datatables_style');
@@ -22,7 +23,7 @@ if (cp_module_activated('mypoints')) {
         echo __('Manage and view information about your points.', 'cp');
         echo '<br /><br />';
         echo '<div style="background:#EFEFEF;display:inline-block;margin-right:25px;"><div style="float:left;font-size:17px;font-weight:bold;background:#E0E0E0;padding:18px;color:#565656;">' . __('My Points', 'cp') . ':</div><div style="float:left;padding:18px;font-size:20px;">' . $wpgamify_points_core->wpg_getPoints($wpgamify_points_core->wpg_currentUser()) . '</div></div>';
-        if (cp_module_activated('ranks')) {
+        if ($wpgamify_points_core->wpg_module_activated('ranks')) {
             echo '<div style="background:#EFEFEF;display:inline-block;"><div style="float:left;font-size:17px;font-weight:bold;background:#E0E0E0;padding:18px;color:#565656;">' . __('My Rank', 'cp') . ':</div><div style="float:left;padding:18px;font-size:20px;">' . cp_module_ranks_getRank($wpgamify_points_core->wpg_currentUser()) . '</div></div>';
         }
         echo '<div style="clear:both;"></div><br />';

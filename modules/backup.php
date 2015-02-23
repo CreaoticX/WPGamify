@@ -1,8 +1,9 @@
 <?php
 /** Backup and Restore Module */
-cp_module_register(__('Backup and Restore', 'cp'), 'backup', '1.0', 'CubePoints', 'http://cubepoints.com', 'http://cubepoints.com', __('Backup and restore the points of your users. Exports points in JSON or CSV format.', 'cp'), 1);
+global $wpgamify_points_core;
+$wpgamify_points_core->wpg_module_register(__('Backup and Restore', 'cp'), 'backup', '1.0', 'CubePoints', 'http://cubepoints.com', 'http://cubepoints.com', __('Backup and restore the points of your users. Exports points in JSON or CSV format.', 'cp'), 1);
 
-if (cp_module_activated('backup')) {
+if ($wpgamify_points_core->wpg_module_activated('backup')) {
 
     add_action('wp_ajax_cp_module_backup_down', 'wp_ajax_cp_module_backup_down');
 

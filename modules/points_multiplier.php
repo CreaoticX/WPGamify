@@ -2,7 +2,8 @@
 
 /** Points Multiplier Module */
 
-cp_module_register(__('Points Multiplier', 'cp') , 'pmultiply' , '1.0', 'CubePoints', 'http://cubepoints.com', 'http://cubepoints.com' , __('This module allows you to temporarily double, triple points earned by users. Useful if you wish to increase user activity in a particular week. You may also use this module to temporarily disable points from being earned.', 'cp'), 1);
+global $wpgamify_points_core;
+$wpgamify_points_core->wpg_module_register(__('Points Multiplier', 'cp') , 'pmultiply' , '1.0', 'CubePoints', 'http://cubepoints.com', 'http://cubepoints.com' , __('This module allows you to temporarily double, triple points earned by users. Useful if you wish to increase user activity in a particular week. You may also use this module to temporarily disable points from being earned.', 'cp'), 1);
 
 function cp_module_pmultiply_install(){
 	add_option('cp_module_pmultiply_multiplier', 2);

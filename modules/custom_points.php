@@ -1,9 +1,10 @@
 <?php
 
 /** Custom Points Module */
-cp_module_register(__('Comments Custom Points', 'cp'), 'customp', '1.0', 'CubePoints', 'http://cubepoints.com', 'http://cubepoints.com', __('This module gives you the ability to set custom points earned for comments for each post.', 'cp'), 1);
+global $wpgamify_points_core;
+$wpgamify_points_core->wpg_module_register(__('Comments Custom Points', 'cp'), 'customp', '1.0', 'CubePoints', 'http://cubepoints.com', 'http://cubepoints.com', __('This module gives you the ability to set custom points earned for comments for each post.', 'cp'), 1);
 
-if (cp_module_activated('customp')) {
+if ($wpgamify_points_core->wpg_module_activated('customp')) {
 
     /* Define the custom box */
     add_action('admin_init', 'cp_module_customp_add_custom_box', 1);
