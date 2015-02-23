@@ -1,6 +1,7 @@
 <?php
 /** Paid Content Module */
-cp_module_register(__('Paid Content', 'cp'), 'pcontent', '1.1', 'CubePoints', 'http://cubepoints.com', 'http://cubepoints.com', __('This module lets you deduct point from users to view a page or post.', 'cp'), 1);
+global $wpgamify_points_core;
+$wpgamify_points_core->wpg_module_register(__('Paid Content', 'cp'), 'pcontent', '1.1', 'CubePoints', 'http://cubepoints.com', 'http://cubepoints.com', __('This module lets you deduct point from users to view a page or post.', 'cp'), 1);
 
 function cp_module_pcontent_install() {
     add_option('cp_module_pcontent_default_points', 10);
@@ -14,7 +15,7 @@ function cp_module_pcontent_install() {
 
 add_action('cp_module_pcontent_activate', 'cp_module_pcontent_install');
 
-if (cp_module_activated('pcontent')) {
+if ($wpgamify_points_core->wpg_module_activated('pcontent')) {
 
     /* Config for this module */
 

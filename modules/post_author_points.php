@@ -1,6 +1,7 @@
 <?php
 /** Post Author Points Module */
-cp_module_register(__('Post Author Points', 'cp'), 'post_author_points', '1.2', 'xBerry Labs', 'http://xBerryLabs.com', 'http://xBerryLabs.com', __('Gives points to authors when people comment on their posts', 'cp'), 1);
+global $wpgamify_points_core;
+$wpgamify_points_core->wpg_module_register(__('Post Author Points', 'cp'), 'post_author_points', '1.2', 'xBerry Labs', 'http://xBerryLabs.com', 'http://xBerryLabs.com', __('Gives points to authors when people comment on their posts', 'cp'), 1);
 
 function cp_module_post_author_points_install() {
     add_option('cp_post_author_points', 1);
@@ -8,7 +9,7 @@ function cp_module_post_author_points_install() {
 
 add_action('cp_module_post_author_points_activate', 'cp_module_post_author_points_install');
 
-if (cp_module_activated('post_author_points')) {
+if ($wpgamify_points_core->wpg_module_activated('post_author_points')) {
 
     function cp_module_post_author_points_config() {
         ?>
@@ -62,6 +63,8 @@ if (cp_module_activated('post_author_points')) {
     add_action('cp_logs_description', 'cp_admin_logs_desc_post_author_points', 10, 4);
 
     function cp_admin_logs_desc_post_author_points($type, $uid, $points, $data) {
+        global $wpgamify_points_core;
+        
         if ($type != 'post_comment') {
             return;
         }
@@ -70,7 +73,7 @@ if (cp_module_activated('post_author_points')) {
         $pdata = get_post($pid);
         $ptitle = $pdata->post_title;
         $url = get_permalink($pid) . '#comment-' . $data;
-        $detail = __('Comment', 'cp') . ': ' . cp_truncate(strip_tags($cdata->comment_content), 100, false);
+        $detail = __('Comment', 'cp') . ': ' . $wpgamify_points_core->wpg_truncate(strip_tags($cdata->comment_content), 100, false);
         if ($cdata->user_id != '0') {
             $commenter = '"<a href="' . get_author_posts_url($cdata->user_id) . '">' . get_the_author_meta('display_name', $cdata->user_id) . '</a>"';
         } else {

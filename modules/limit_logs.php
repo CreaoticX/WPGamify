@@ -1,6 +1,7 @@
 <?php
 /** Limit Logs Display Module */
-cp_module_register(__('Limit Logs Display', 'cp'), 'limitlogs', '1.0', 'CubePoints', 'http://cubepoints.com', 'http://cubepoints.com', __('This module allows you to limit the number of log items being displayed in the logs page.', 'cp'), 1);
+global $wpgamify_points_core;
+$wpgamify_points_core->wpg_module_register(__('Limit Logs Display', 'cp'), 'limitlogs', '1.0', 'CubePoints', 'http://cubepoints.com', 'http://cubepoints.com', __('This module allows you to limit the number of log items being displayed in the logs page.', 'cp'), 1);
 
 function cp_module_limitlogs_install() {
     add_option('cp_module_limitlogs_max', 100);
@@ -8,7 +9,7 @@ function cp_module_limitlogs_install() {
 
 add_action('cp_module_limitlogs_activate', 'cp_module_limitlogs_install');
 
-if (cp_module_activated('limitlogs')) {
+if ($wpgamify_points_core->wpg_module_activated('limitlogs')) {
 
     function cp_module_limitlogs_config() {
         ?>

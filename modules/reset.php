@@ -1,8 +1,9 @@
 <?php
 /** Reset Data Module */
-cp_module_register(__('Reset Data', 'cp'), 'resetdata', '1.0', 'CubePoints', 'http://cubepoints.com', 'http://cubepoints.com', __('Erases all point data from the database.', 'cp'), 1);
+global $wpgamify_points_core;
+$wpgamify_points_core->wpg_module_register(__('Reset Data', 'cp'), 'resetdata', '1.0', 'CubePoints', 'http://cubepoints.com', 'http://cubepoints.com', __('Erases all point data from the database.', 'cp'), 1);
 
-if (cp_module_activated('resetdata')) {
+if ($wpgamify_points_core->wpg_module_activated('resetdata')) {
 
     function cp_module_resetdata_add_admin_page() {
         add_submenu_page('cp_admin_manage', 'CubePoints - ' . __('Reset Data', 'cp'), __('Reset Data', 'cp'), 'manage_options', 'cp_modules_resetdata_admin', 'cp_modules_resetdata_admin');

@@ -1,8 +1,9 @@
 <?php
 /** Donate Module */
-cp_module_register(__('Donate', 'cp'), 'donate', '1.2', 'CubePoints', 'http://cubepoints.com', 'http://cubepoints.com', __('This module allows your users to donate points to each other.', 'cp'), 1);
+global $wpgamify_points_core;
+$wpgamify_points_core->wpg_module_register(__('Donate', 'cp'), 'donate', '1.2', 'CubePoints', 'http://cubepoints.com', 'http://cubepoints.com', __('This module allows your users to donate points to each other.', 'cp'), 1);
 
-if (cp_module_activated('donate')) {
+if ($wpgamify_points_core->wpg_module_activated('donate')) {
 
     add_action('wp_ajax_cp_donate_search', 'cp_module_donate_ajax_search');
 
@@ -142,7 +143,7 @@ if (cp_module_activated('donate')) {
             'donateComment' => __('Leave feedback (to be displayed on recipient\'s profile)', 'cp'),
             'donateCommentPlaceholder' => __('Enter a message...', 'cp'),
             'notLoggedInText' => __('You must be logged in to make a transfer!', 'cp'),
-            'somethingWentWrongText' => _('Oops, something went wrong! Please try again later.', 'cp')
+            'somethingWentWrongText' => __('Oops, something went wrong! Please try again later.', 'cp')
         ));
     }
 

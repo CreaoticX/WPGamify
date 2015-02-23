@@ -1,6 +1,7 @@
 <?php
 /** PayPal Top-up Module */
-cp_module_register(__('PayPal Top-up', 'cp'), 'paypal', '1.2', 'CubePoints', 'http://cubepoints.com', 'http://cubepoints.com', __('Allow users to buy points using PayPal.', 'cp'), 1);
+//global $wpgamify_points_core;
+//$wpgamify_points_core->wpg_module_register(__('PayPal Top-up', 'cp'), 'paypal', '1.2', 'CubePoints', 'http://cubepoints.com', 'http://cubepoints.com', __('Allow users to buy points using PayPal.', 'cp'), 1);
 
 function cp_module_paypal_install() {
     add_option('cp_module_paypal_account', '');
@@ -14,9 +15,9 @@ function cp_module_paypal_install() {
     add_option('cp_module_paypal_form', "<form method=\"post\">\n<input type=\"hidden\" name=\"cp_module_paypal_pay\" value=\"1\" />\nNumber of points to purchase:<br />\n<input type=\"text\" name=\"points\" /><br />\n<input type=\"submit\" value=\"Buy!\" />\n</form>");
 }
 
-add_action('cp_module_paypal_activate', 'cp_module_paypal_install');
+//add_action('cp_module_paypal_activate', 'cp_module_paypal_install');
 
-if (cp_module_activated('paypal')) {
+if ($wpgamify_points_core->wpg_module_activated('paypal')) {
 
     function cp_module_paypal_shortcode($atts) {
         $r = get_option('cp_module_paypal_form');
@@ -100,7 +101,8 @@ if (cp_module_activated('paypal')) {
                 echo 'selected';
             }
         }
-
+        
+        $cp_module_paypal_sandbox_checked = '';
         if (get_option('cp_module_paypal_sandbox')) {
             $cp_module_paypal_sandbox_checked = 'checked';
         }

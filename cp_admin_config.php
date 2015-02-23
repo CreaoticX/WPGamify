@@ -10,7 +10,7 @@ function cp_admin_config()
  	if ( isset($admin_form_submit) && $admin_form_submit == 'Y' ) {
                 $topfilter = filter_input(INPUT_POST, 'cp_topfilter');
 		$cp_topfilter = explode(',',str_replace(array("\n","\r"),'',$topfilter));
-		if(cp_topfilter==''){
+		if($cp_topfilter==''){
 			$cp_topfilter=array();
 		}
 		else{

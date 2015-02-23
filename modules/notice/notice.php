@@ -1,7 +1,8 @@
 <?php
 
 /** Notify Module */
-cp_module_register(__('Notify', 'cp'), 'notify', '1.1', 'CubePoints', 'http://cubepoints.com', 'http://cubepoints.com', __('After activating this module, a growl-like pop up will appear to your users each time they earn points.', 'cp'), 1);
+global $wpgamify_points_core;
+$wpgamify_points_core->wpg_module_register(__('Notify', 'cp'), 'notify', '1.1', 'CubePoints', 'http://cubepoints.com', 'http://cubepoints.com', __('After activating this module, a growl-like pop up will appear to your users each time they earn points.', 'cp'), 1);
 
 function cp_module_notify_install() {
     global $wpdb;
@@ -27,18 +28,18 @@ function cp_module_notify_uninstall() {
 
 add_action('cp_module_notify_deactivate', 'cp_module_notify_uninstall');
 
-if (cp_module_activated('notify')) {
+if ($wpgamify_points_core->wpg_module_activated('notify')) {
     /*     * ********************
      * Enqueuing Scripts
      * ********************* */
-    wp_register_script(
-            'jQuery_notice', WP_PLUGIN_URL . '/' . str_replace(basename(__FILE__), "", plugin_basename(__FILE__)) . 'jquery.notice.js', array('jquery'), '1.0.1'
-    );
-    wp_register_style(
-            'jQuery_notice', WP_PLUGIN_URL . '/' . str_replace(basename(__FILE__), "", plugin_basename(__FILE__)) . 'jquery.notice.css'
-    );
 
     function cp_notify_script() {
+        wp_register_script(
+                'jQuery_notice', WP_PLUGIN_URL . '/' . str_replace(basename(__FILE__), "", plugin_basename(__FILE__)) . 'jquery.notice.js', array('jquery'), '1.0.1'
+        );
+        wp_register_style(
+                'jQuery_notice', WP_PLUGIN_URL . '/' . str_replace(basename(__FILE__), "", plugin_basename(__FILE__)) . 'jquery.notice.css'
+        );
         wp_enqueue_script('jquery');
         wp_enqueue_script('jQuery_notice');
     }
@@ -124,7 +125,7 @@ if (cp_module_activated('notify')) {
 
     add_action('wp_footer', 'cp_module_notify_do', 1);
 
-    /** hook into cp_points() */
+    /** hook into wpg_points_log() */
     add_action('wpg_points_log', 'cp_module_notify_logsHook', 10, 4);
 
     function cp_module_notify_logsHook($type, $uid, $points, $data) {

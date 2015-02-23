@@ -119,17 +119,17 @@ class GamifyBadgeIssued extends GamifyBase{
             $this->update_meta($v, $this->get_value($k));
         }
         if($this->get_value("award_status") == NULL){
-            $post_status = get_post_status($post_id);
-            if (get_post_meta($post_id, 'wpgamify-award-status', true) == false &&
+            $post_status = get_post_status($this->key_id);
+            if (get_post_meta($this->key_id, 'wpgamify-award-status', true) == false &&
                     $post_status == "publish"){
-                add_post_meta($post_id, 'wpgamify-award-status', 'Awarded');
+                add_post_meta($this->key_id, 'wpgamify-award-status', 'Awarded');
             }
         }
 
         // Add the salt only the first time, and do not update if already exists
-        if (get_post_meta($post_id, 'wpgamify-award-salt', true) == false) {
+        if (get_post_meta($this->key_id, 'wpgamify-award-salt', true) == false) {
             $salt = substr(str_shuffle(str_repeat("0123456789abcdefghijklmnopqrstuvwxyz", 8)), 0, 8);
-            add_post_meta($post_id, 'wpgamify-award-salt', $salt);
+            add_post_meta($this->key_id, 'wpgamify-award-salt', $salt);
         }
     }
     
